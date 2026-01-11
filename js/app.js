@@ -47,8 +47,14 @@ class Flip7App {
 
         document.getElementById('btn-confirm-join')?.addEventListener('click', () => {
             const code = document.getElementById('input-room-code')?.value?.trim();
-            if (code) {
-                this.joinRoom(code);
+            const btn = document.getElementById('btn-confirm-join');
+            if (code && btn && !btn.disabled) {
+                btn.disabled = true;
+                btn.textContent = 'Connexion...';
+                this.joinRoom(code).catch(() => {
+                    btn.disabled = false;
+                    btn.textContent = 'Rejoindre';
+                });
             }
         });
 
@@ -72,7 +78,8 @@ class Flip7App {
             onLeave: () => this.leaveLobby(),
             onProfileUpdate: (name, avatar) => this.updateProfile(name, avatar),
             onTargetScoreChange: (score) => this.updateTargetScore(score),
-            onCopyCode: (code) => this.showToast('Code copié !', 'success')
+            onCopyCode: (code) => this.showToast('Code copié !', 'success'),
+            onKick: (playerId) => this.kickPlayer(playerId)
         });
     }
 
@@ -239,6 +246,16 @@ class Flip7App {
     updateTargetScore(score) {
         if (this.isHost && this.host) {
             this.host.setTargetScore(score);
+        }
+    }
+
+    /**
+     * Kick un joueur (hôte)
+     */
+    kickPlayer(playerId) {
+        if (this.isHost && this.host) {
+            this.host.kickPlayer(playerId);
+            this.showToast('Joueur exclu', 'info');
         }
     }
 

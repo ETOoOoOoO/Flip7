@@ -11,10 +11,12 @@ export class LobbyUI {
         this.onProfileUpdate = options.onProfileUpdate;
         this.onTargetScoreChange = options.onTargetScoreChange;
         this.onCopyCode = options.onCopyCode;
+        this.onKick = options.onKick;
 
         this.selectedAvatar = getRandomAvatar();
         this.playerName = '';
         this.isHost = false;
+        this.localPlayerId = null;
 
         this.bindElements();
         this.bindEvents();
@@ -90,11 +92,19 @@ export class LobbyUI {
     updatePlayersList(players, localPlayerId) {
         if (!this.playersList) return;
 
+        this.localPlayerId = localPlayerId;
+
         this.playersList.innerHTML = players.map(player => {
             const isYou = player.id === localPlayerId;
             const classes = ['player-item'];
             if (player.isHost) classes.push('is-host');
             if (isYou) classes.push('is-you');
+
+            // Bouton kick (seulement pour l'hôte et pas pour soi-même)
+            const canKick = this.isHost && !isYou && !player.isHost;
+            const kickBtn = canKick
+                ? `<button class="btn-kick" data-player-id="${player.id}" title="Exclure ce joueur">❌</button>`
+                : '';
 
             return `
                 <li class="${classes.join(' ')}">
@@ -102,9 +112,20 @@ export class LobbyUI {
                     <span class="player-name">${player.name || 'Joueur'}</span>
                     ${player.isHost ? '<span class="player-badge badge-host">Hôte</span>' : ''}
                     ${isYou ? '<span class="player-badge badge-you">Toi</span>' : ''}
+                    ${kickBtn}
                 </li>
             `;
         }).join('');
+
+        // Ajoute les listeners pour les boutons kick
+        this.playersList.querySelectorAll('.btn-kick').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const playerId = btn.dataset.playerId;
+                if (confirm('Exclure ce joueur ?')) {
+                    this.onKick?.(playerId);
+                }
+            });
+        });
 
         this.playerCountEl.textContent = `(${players.length}/10)`;
 

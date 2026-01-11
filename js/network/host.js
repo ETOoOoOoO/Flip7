@@ -130,6 +130,39 @@ export class GameHost {
     }
 
     /**
+     * Kick un joueur (hôte seulement)
+     */
+    kickPlayer(playerId) {
+        if (this.gamePhase !== GamePhase.LOBBY) return false;
+
+        const playerIndex = this.players.findIndex(p => p.id === playerId);
+        if (playerIndex === -1) return false;
+
+        const player = this.players[playerIndex];
+        if (player.isHost) return false; // Can't kick host
+
+        // Ferme la connexion
+        const conn = this.connections.get(playerId);
+        if (conn) {
+            conn.send(createMessage(MessageType.KICKED, { reason: 'Tu as été exclu par l\'hôte' }));
+            conn.close();
+        }
+
+        // Supprime le joueur
+        this.players.splice(playerIndex, 1);
+        this.connections.delete(playerId);
+
+        // Notifie les autres
+        this.broadcast(createMessage(MessageType.PLAYER_LEFT, {
+            playerId: playerId,
+            playerName: player.name
+        }));
+
+        this.notifyStateChange();
+        return true;
+    }
+
+    /**
      * Gère un message reçu
      */
     handleMessage(conn, message) {

@@ -156,6 +156,10 @@ export class GameClient {
             case MessageType.ERROR:
                 this.onError?.(message.error);
                 break;
+            case MessageType.KICKED:
+                this.onError?.(message.reason || 'Tu as été exclu');
+                this.destroy();
+                break;
             case MessageType.SECOND_CHANCE_PROMPT:
                 this.pendingSecondChance = true;
                 this.notifyStateChange();
