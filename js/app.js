@@ -134,11 +134,19 @@ class Flip7App {
         this.isHost = false;
         const playerName = 'Joueur';
         const playerAvatar = getRandomAvatar();
+        const btn = document.getElementById('btn-confirm-join');
 
         try {
             this.client = new GameClient(
                 (state) => this.onStateChange(state),
-                (error) => this.showToast(error, 'error'),
+                (error) => {
+                    this.showToast(error, 'error');
+                    // Si on est kické, retour à l'accueil
+                    if (error.includes('exclu')) {
+                        this.cleanup();
+                        this.showScreen('screen-home');
+                    }
+                },
                 (message) => this.onMessage(message)
             );
 
@@ -150,10 +158,22 @@ class Flip7App {
             this.lobbyUI.setPlayerName(playerName);
             this.lobbyUI.selectedAvatar = playerAvatar;
 
+            // Reset du bouton
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Rejoindre';
+            }
+
             this.showToast('Connecté !', 'success');
         } catch (error) {
             console.error('Failed to join room:', error);
             this.showToast('Impossible de rejoindre', 'error');
+            // Reset du bouton
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Rejoindre';
+            }
+            throw error; // Re-throw pour le .catch()
         }
     }
 
