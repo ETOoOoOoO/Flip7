@@ -222,8 +222,15 @@ export class GameHost {
             return false;
         }
 
+        // Reset tous les scores des joueurs pour la nouvelle partie
+        for (const player of this.players) {
+            player.score = 0;
+            player.roundScore = 0;
+        }
+
         this.gamePhase = GamePhase.PLAYING;
         this.roundNumber = 0;
+        this.dealerIndex = 0;
 
         this.broadcast(createMessage(MessageType.GAME_STARTING, {
             targetScore: this.targetScore

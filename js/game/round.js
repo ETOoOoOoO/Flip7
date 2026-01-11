@@ -121,6 +121,7 @@ export class Round {
                     this.flip7Achieved = true;
                     this.flip7Player = player;
                     result.flip7 = true;
+                    result.roundEnded = true;
                     this.endRound();
                 } else {
                     this.advanceToNextPlayer();
