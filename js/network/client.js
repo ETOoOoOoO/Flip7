@@ -31,6 +31,7 @@ export class GameClient {
     async join(roomCode, playerName, playerAvatar) {
         return new Promise((resolve, reject) => {
             this.roomCode = roomCode.toUpperCase();
+            let hasResolved = false;
 
             this.peer = new Peer({
                 debug: 1
@@ -55,22 +56,31 @@ export class GameClient {
                 this.connection.on('data', (data) => {
                     this.handleMessage(data);
 
-                    // Résout la promesse après avoir reçu le premier état
-                    if (data.type === MessageType.GAME_STATE && !this.localPlayer) {
-                        this.localPlayer = this.players.find(p => p.id === this.peer.id);
-                        resolve(true);
+                    // Résout la promesse après avoir reçu le premier état avec notre joueur
+                    if (data.type === MessageType.GAME_STATE && !hasResolved) {
+                        // Attendre que handleGameState ait mis à jour localPlayer
+                        if (this.localPlayer) {
+                            hasResolved = true;
+                            console.log('Join successful, local player:', this.localPlayer);
+                            resolve(true);
+                        }
                     }
                 });
 
                 this.connection.on('close', () => {
                     console.log('Disconnected from host');
+                    if (!hasResolved) {
+                        reject(new Error('Déconnecté du serveur'));
+                    }
                     this.onError?.('Déconnecté du serveur');
                 });
 
                 this.connection.on('error', (err) => {
                     console.error('Connection error:', err);
+                    if (!hasResolved) {
+                        reject(err);
+                    }
                     this.onError?.(err.message);
-                    reject(err);
                 });
             });
 
@@ -87,7 +97,7 @@ export class GameClient {
 
             // Timeout
             setTimeout(() => {
-                if (!this.localPlayer) {
+                if (!hasResolved) {
                     reject(new Error('Timeout: impossible de se connecter'));
                 }
             }, 10000);
