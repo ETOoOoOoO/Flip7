@@ -199,6 +199,13 @@ export class GameClient {
     handleGameStarting(message) {
         this.gamePhase = GamePhase.PLAYING;
         this.targetScore = message.targetScore;
+
+        // Reset tous les scores des joueurs pour la nouvelle partie
+        for (const player of this.players) {
+            player.score = 0;
+            player.roundScore = 0;
+        }
+
         this.notifyStateChange();
     }
 

@@ -93,7 +93,12 @@ export class TableUI {
         // Boutons d'action
         this.updateActionButtons(localPlayer, currentPlayerId, state.pendingSecondChance);
 
-        // Modals
+        // Modals - cacher les modals quand on joue
+        if (state.gamePhase === 'playing') {
+            this.hideRoundEndModal();
+            this.modalGameEnd?.classList.add('hidden');
+        }
+
         if (state.gamePhase === 'round_end') {
             this.showRoundEndModal(players, isHost);
         }
