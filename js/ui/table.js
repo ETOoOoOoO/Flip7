@@ -62,6 +62,14 @@ export class TableUI {
         this.btnBackHome?.addEventListener('click', () => this.onBackHome?.());
         this.btnCancelTarget?.addEventListener('click', () => this.hideTargetModal());
 
+        // Cliquer sur le deck pour piocher
+        const deck = document.getElementById('deck');
+        deck?.addEventListener('click', () => {
+            if (this.btnHit && !this.btnHit.disabled) {
+                this.onHit?.();
+            }
+        });
+
         document.getElementById('btn-leave-game')?.addEventListener('click', () => {
             if (confirm('Quitter la partie ?')) {
                 this.onLeave?.();
@@ -83,6 +91,12 @@ export class TableUI {
         if (this.roundNumberEl) this.roundNumberEl.textContent = roundNumber || 1;
         if (this.targetScoreEl) this.targetScoreEl.textContent = targetScore || 200;
         if (this.deckCountEl) this.deckCountEl.textContent = deckCount || 0;
+
+        // Deck glow when it's our turn
+        const deck = document.getElementById('deck');
+        const isMyTurn = localPlayer?.id === currentPlayerId &&
+            (localPlayer?.status === 'active' || localPlayer?.status === 'ACTIVE');
+        deck?.classList.toggle('active', isMyTurn && !state.pendingSecondChance);
 
         // Joueur local
         this.updateLocalPlayer(localPlayer);

@@ -343,6 +343,10 @@ export class GameHost {
         if (result.canUseSecondChance) {
             const conn = this.connections.get(peerId);
             conn?.send(createMessage(MessageType.SECOND_CHANCE_PROMPT, {}));
+            // Track pending for host
+            if (peerId === this.localPlayer.id) {
+                this.pendingSecondChance = true;
+            }
         }
 
         if (result.roundEnded) {
@@ -360,6 +364,11 @@ export class GameHost {
     handleUseSecondChance(peerId) {
         if (!this.round) return;
 
+        // Reset pending flag
+        if (peerId === this.localPlayer.id) {
+            this.pendingSecondChance = false;
+        }
+
         const result = this.round.useSecondChance(peerId);
 
         if (result.success) {
@@ -375,6 +384,11 @@ export class GameHost {
      */
     handleDeclineSecondChance(peerId) {
         if (!this.round) return;
+
+        // Reset pending flag
+        if (peerId === this.localPlayer.id) {
+            this.pendingSecondChance = false;
+        }
 
         const player = this.players.find(p => p.id === peerId);
         if (player) {
@@ -570,7 +584,8 @@ export class GameHost {
             roomCode: this.roomCode,
             isHost: true,
             currentPlayerId: this.round?.getCurrentPlayer()?.id || null,
-            deckCount: this.round?.deck?.remaining() || 94
+            deckCount: this.round?.deck?.remaining() || 94,
+            pendingSecondChance: this.pendingSecondChance || false
         });
     }
 
