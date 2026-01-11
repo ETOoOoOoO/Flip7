@@ -338,7 +338,10 @@ export class TableUI {
         // Pour Flip Three: tous les joueurs actifs (y compris soi-même)
         // Pour Freeze: tous les joueurs actifs sauf soi-même
         const targetablePlayers = players.filter(p => {
-            const isActive = p.status === 'active' || p.status === 'ACTIVE';
+            // Check status - peut être string ou enum
+            const status = String(p.status).toLowerCase();
+            const isActive = status === 'active';
+
             if (actionCard.subType === 'freeze') {
                 return isActive && p.id !== localPlayerId;
             } else {
@@ -346,6 +349,8 @@ export class TableUI {
                 return isActive;
             }
         });
+
+        console.log('Targetable players for', actionCard.subType, ':', targetablePlayers.map(p => p.name));
 
         this.targetPlayers.innerHTML = targetablePlayers.map(player => `
             <button class="target-player-btn" data-player-id="${player.id}">
