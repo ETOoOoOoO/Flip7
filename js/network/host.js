@@ -197,9 +197,10 @@ export class GameHost {
      * Gère la demande de rejoindre
      */
     handleJoin(conn, message) {
-        if (this.gamePhase !== GamePhase.LOBBY) {
+        // Interdit de rejoindre si la partie est terminée
+        if (this.gamePhase === GamePhase.GAME_END) {
             conn.send(createMessage(MessageType.ERROR, {
-                error: 'La partie a déjà commencé'
+                error: 'La partie est terminée'
             }));
             return;
         }
@@ -213,6 +214,13 @@ export class GameHost {
 
         // Crée le nouveau joueur
         const player = new Player(conn.peer, message.name, message.avatar, false);
+
+        // Si la partie est en cours, le joueur commence avec 0 et attend le prochain round
+        if (this.gamePhase === GamePhase.PLAYING || this.gamePhase === GamePhase.ROUND_END) {
+            player.score = 0;
+            player.status = 'waiting'; // Attend le prochain round
+        }
+
         this.players.push(player);
         this.connections.set(conn.peer, conn);
 
@@ -221,12 +229,17 @@ export class GameHost {
             players: this.players.map(p => p.serialize()),
             gamePhase: this.gamePhase,
             targetScore: this.targetScore,
-            roomCode: this.roomCode
+            roomCode: this.roomCode,
+            roundNumber: this.roundNumber,
+            currentPlayerId: this.round?.getCurrentPlayer()?.id,
+            deckCount: this.round?.deck?.remaining() || 94,
+            lateJoin: this.gamePhase !== GamePhase.LOBBY
         }));
 
         // Notifie tous les autres joueurs
         this.broadcast(createMessage(MessageType.PLAYER_JOINED, {
-            player: player.serialize()
+            player: player.serialize(),
+            lateJoin: this.gamePhase !== GamePhase.LOBBY
         }), conn.peer);
 
         this.notifyStateChange();
