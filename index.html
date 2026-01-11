@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flip7 - Jeu de Cartes Multijoueur</title>
-    <meta name="description" content="Jouez à Flip7 avec vos amis en ligne ! Un jeu de cartes push-your-luck pour 3-10 joueurs.">
-    
+    <meta name="description"
+        content="Jouez à Flip7 avec vos amis en ligne ! Un jeu de cartes push-your-luck pour 3-10 joueurs.">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cards.css">
     <link rel="stylesheet" href="css/table.css">
     <link rel="stylesheet" href="css/animations.css">
-    
+
     <!-- PeerJS -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 </head>
+
 <body>
     <!-- Écran d'accueil -->
     <div id="screen-home" class="screen active">
@@ -28,7 +32,7 @@
                 <h1 class="logo">FLIP<span class="logo-7">7</span></h1>
                 <p class="tagline">Le jeu de cartes où chaque pioche compte !</p>
             </div>
-            
+
             <div class="home-buttons">
                 <button id="btn-create" class="btn btn-primary btn-large">
                     <span class="btn-icon">🎴</span>
@@ -39,14 +43,15 @@
                     Rejoindre une table
                 </button>
             </div>
-            
+
             <!-- Modal pour rejoindre -->
             <div id="modal-join" class="modal hidden">
                 <div class="modal-content">
                     <h2>Rejoindre une table</h2>
                     <div class="input-group">
                         <label for="input-room-code">Code de la table</label>
-                        <input type="text" id="input-room-code" placeholder="FLIP-XXXX" maxlength="9" autocomplete="off">
+                        <input type="text" id="input-room-code" placeholder="FLIP-XXXX" maxlength="9"
+                            autocomplete="off">
                     </div>
                     <div class="modal-buttons">
                         <button id="btn-cancel-join" class="btn btn-ghost">Annuler</button>
@@ -68,14 +73,15 @@
                     <button id="btn-copy-code" class="btn btn-icon-only" title="Copier le code">📋</button>
                 </div>
             </div>
-            
+
             <div class="lobby-content">
                 <!-- Configuration du joueur -->
                 <div class="player-config">
                     <h3>Ton profil</h3>
                     <div class="input-group">
                         <label for="input-player-name">Pseudo</label>
-                        <input type="text" id="input-player-name" placeholder="Ton pseudo..." maxlength="15" autocomplete="off">
+                        <input type="text" id="input-player-name" placeholder="Ton pseudo..." maxlength="15"
+                            autocomplete="off">
                     </div>
                     <div class="avatar-selector">
                         <label>Avatar</label>
@@ -84,7 +90,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Liste des joueurs -->
                 <div class="players-list-container">
                     <h3>Joueurs <span id="player-count">(0/10)</span></h3>
@@ -92,7 +98,7 @@
                         <!-- Joueurs injectés par JS -->
                     </ul>
                 </div>
-                
+
                 <!-- Paramètres (hôte uniquement) -->
                 <div id="host-settings" class="host-settings hidden">
                     <h3>Paramètres</h3>
@@ -102,7 +108,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="lobby-footer">
                 <button id="btn-leave-lobby" class="btn btn-ghost">Quitter</button>
                 <button id="btn-start-game" class="btn btn-primary btn-large hidden">
@@ -124,7 +130,7 @@
                 </div>
                 <button id="btn-leave-game" class="btn btn-ghost btn-small">Quitter</button>
             </div>
-            
+
             <!-- Zone de jeu principale -->
             <div class="table-area" id="table-area">
                 <!-- Deck au centre -->
@@ -137,13 +143,13 @@
                         <!-- Carte courante affichée ici -->
                     </div>
                 </div>
-                
+
                 <!-- Joueurs autour de la table (positionnés par JS) -->
                 <div id="players-around" class="players-around">
                     <!-- Joueurs injectés par JS -->
                 </div>
             </div>
-            
+
             <!-- Zone du joueur local (en bas) -->
             <div class="local-player-zone">
                 <div class="local-player-info">
@@ -153,11 +159,11 @@
                         <span class="local-score">Score : <span id="local-score">0</span> pts</span>
                     </div>
                 </div>
-                
+
                 <div class="local-cards" id="local-cards">
                     <!-- Cartes du joueur local -->
                 </div>
-                
+
                 <div class="action-buttons" id="action-buttons">
                     <button id="btn-hit" class="btn btn-action btn-hit" disabled>
                         🎴 Piocher
@@ -167,12 +173,12 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Messages de jeu -->
             <div id="game-message" class="game-message hidden">
                 <span id="game-message-text"></span>
             </div>
-            
+
             <!-- Modal de fin de round -->
             <div id="modal-round-end" class="modal hidden">
                 <div class="modal-content modal-round-end">
@@ -184,7 +190,7 @@
                     <p id="waiting-next-round" class="waiting-message">En attente de l'hôte...</p>
                 </div>
             </div>
-            
+
             <!-- Modal de fin de partie -->
             <div id="modal-game-end" class="modal hidden">
                 <div class="modal-content modal-game-end">
@@ -198,7 +204,7 @@
                     <button id="btn-back-home" class="btn btn-primary">Retour à l'accueil</button>
                 </div>
             </div>
-            
+
             <!-- Modal de sélection de cible (pour cartes action) -->
             <div id="modal-target" class="modal hidden">
                 <div class="modal-content">
@@ -215,7 +221,11 @@
     <!-- Toast notifications -->
     <div id="toast-container" class="toast-container"></div>
 
+    <!-- Version footer -->
+    <div class="version-footer">v1.1.0</div>
+
     <!-- Scripts -->
     <script type="module" src="js/app.js"></script>
 </body>
+
 </html>

@@ -75,6 +75,10 @@ export class TableUI {
     update(state) {
         const { players, localPlayer, roundNumber, targetScore, currentPlayerId, deckCount, isHost } = state;
 
+        // Store state for action card handlers
+        this.currentPlayers = players;
+        this.currentLocalPlayerId = localPlayer?.id;
+
         // Header info
         if (this.roundNumberEl) this.roundNumberEl.textContent = roundNumber || 1;
         if (this.targetScoreEl) this.targetScoreEl.textContent = targetScore || 200;
@@ -121,7 +125,8 @@ export class TableUI {
                 if (cardObj.isAction() && cardObj.subType !== ActionType.SECOND_CHANCE) {
                     cardEl.classList.add('clickable');
                     cardEl.addEventListener('click', () => {
-                        this.showTargetModal(cardObj);
+                        // Use stored players and localPlayerId
+                        this.showTargetModal(cardObj, this.currentPlayers, this.currentLocalPlayerId);
                     });
                 }
 
@@ -296,10 +301,50 @@ export class TableUI {
      * Affiche le modal de sélection de cible
      */
     showTargetModal(actionCard, players, localPlayerId) {
-        // Cette fonction sera appelée quand on clique sur une carte action
-        // Pour l'instant, on stocke la carte et on affichera le modal
+        if (!this.modalTarget || !this.targetPlayers) return;
+
         this.pendingActionCard = actionCard;
-        // Le modal sera affiché avec la liste des joueurs valides
+
+        // Titre selon le type d'action
+        const titleEl = document.getElementById('target-modal-title');
+        if (titleEl) {
+            if (actionCard.subType === 'freeze') {
+                titleEl.textContent = '❄️ Geler un joueur';
+            } else if (actionCard.subType === 'flip-three') {
+                titleEl.textContent = '🔄 Forcer à piocher 3 cartes';
+            }
+        }
+
+        // Génère la liste des joueurs ciblables
+        // Pour Flip Three: tous les joueurs actifs (y compris soi-même)
+        // Pour Freeze: tous les joueurs actifs sauf soi-même
+        const targetablePlayers = players.filter(p => {
+            const isActive = p.status === 'active' || p.status === 'ACTIVE';
+            if (actionCard.subType === 'freeze') {
+                return isActive && p.id !== localPlayerId;
+            } else {
+                // Flip Three peut cibler tout le monde y compris soi-même
+                return isActive;
+            }
+        });
+
+        this.targetPlayers.innerHTML = targetablePlayers.map(player => `
+            <button class="target-player-btn" data-player-id="${player.id}">
+                <span class="target-avatar">${player.avatar}</span>
+                <span class="target-name">${player.name}${player.id === localPlayerId ? ' (Toi)' : ''}</span>
+            </button>
+        `).join('');
+
+        // Ajoute les listeners
+        this.targetPlayers.querySelectorAll('.target-player-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.dataset.playerId;
+                this.onPlayAction?.(actionCard.subType, targetId);
+                this.hideTargetModal();
+            });
+        });
+
+        this.modalTarget.classList.remove('hidden');
     }
 
     /**

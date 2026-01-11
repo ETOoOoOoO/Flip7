@@ -7,63 +7,65 @@
     --color-bg-dark: #0f1419;
     --color-bg-medium: #1a2332;
     --color-bg-light: #243447;
-    
+
     --color-primary: #6366f1;
     --color-primary-light: #818cf8;
     --color-primary-dark: #4f46e5;
-    
+
     --color-secondary: #10b981;
     --color-secondary-light: #34d399;
-    
+
     --color-accent: #f59e0b;
     --color-accent-light: #fbbf24;
-    
+
     --color-danger: #ef4444;
     --color-danger-light: #f87171;
-    
+
     --color-freeze: #3b82f6;
     --color-flip-three: #f97316;
     --color-second-chance: #22c55e;
-    
+
     /* Texte */
     --color-text: #f8fafc;
     --color-text-muted: #94a3b8;
     --color-text-dark: #1e293b;
-    
+
     /* Table de jeu */
     --color-table: #166534;
     --color-table-light: #15803d;
     --color-table-border: #14532d;
-    
+
     /* Cartes */
     --color-card-bg: #ffffff;
     --color-card-back: #3730a3;
-    
+
     /* Effets */
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
     --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.25);
     --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.4);
-    
+
     /* Bordures */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 24px;
     --radius-full: 9999px;
-    
+
     /* Transitions */
     --transition-fast: 150ms ease;
     --transition-normal: 250ms ease;
     --transition-slow: 400ms ease;
-    
+
     /* Fonts */
     --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* Reset */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -143,8 +145,15 @@ body {
 }
 
 @keyframes logo-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
 }
 
 .tagline {
@@ -285,6 +294,7 @@ body {
         opacity: 0;
         transform: scale(0.95) translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -572,6 +582,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -583,6 +594,7 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+
     to {
         opacity: 0;
         transform: translateY(-20px);
@@ -603,4 +615,95 @@ body {
 
 .text-muted {
     color: var(--color-text-muted);
+}
+
+/* ==========================================
+   Version footer
+   ========================================== */
+
+.version-footer {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: var(--font-family);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ==========================================
+   Target players modal
+   ========================================== */
+
+.target-players {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.target-player-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--color-text);
+    font-family: var(--font-family);
+    font-size: 1rem;
+    width: 100%;
+}
+
+.target-player-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--color-primary);
+    transform: scale(1.02);
+}
+
+.target-player-btn .target-avatar {
+    font-size: 2rem;
+}
+
+.target-player-btn .target-name {
+    font-weight: 600;
+    color: #fff;
+}
+
+.target-player-btn .target-status {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.target-player-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Action card clickable indicator */
+.card.clickable {
+    cursor: pointer;
+    position: relative;
+}
+
+.card.clickable::after {
+    content: '👆';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1.2rem;
+    animation: bounce 1s ease infinite;
+}
+
+.card.clickable:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
 }
