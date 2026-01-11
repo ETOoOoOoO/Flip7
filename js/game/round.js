@@ -300,6 +300,14 @@ export class Round {
      * Termine le round
      */
     endRound() {
+        if (this.phase === RoundPhase.ENDED) {
+            return {
+                scores: Rules.calculateAllRoundScores(this.players),
+                flip7: this.flip7Achieved,
+                flip7Player: this.flip7Player?.id
+            };
+        }
+
         this.phase = RoundPhase.ENDED;
 
         // Calcule les scores
