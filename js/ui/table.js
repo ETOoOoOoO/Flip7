@@ -49,6 +49,7 @@ export class TableUI {
         this.winnerDisplay = document.getElementById('winner-display');
         this.finalScores = document.getElementById('final-scores');
         this.btnBackHome = document.getElementById('btn-back-home');
+        this.btnPlayAgain = document.getElementById('btn-play-again');
 
         this.modalTarget = document.getElementById('modal-target');
         this.targetPlayers = document.getElementById('target-players');
@@ -76,6 +77,13 @@ export class TableUI {
             if (confirm('⚠️ Êtes-vous sûr de vouloir réinitialiser la partie ? Tous les scores seront perdus.')) {
                 this.onResetGame?.();
                 this.hideAdminModal();
+            }
+        });
+
+        this.btnPlayAgain?.addEventListener('click', () => {
+            if (confirm('Rejouer une partie avec les mêmes joueurs ?')) {
+                this.onResetGame?.();
+                this.modalGameEnd?.classList.add('hidden');
             }
         });
 
@@ -621,6 +629,14 @@ export class TableUI {
                 <span class="final-score-points">${player.score} pts</span>
             </div>
                 `).join('');
+
+
+
+        if (this.isHost) {
+            this.btnPlayAgain?.classList.remove('hidden');
+        } else {
+            this.btnPlayAgain?.classList.add('hidden');
+        }
 
         this.modalRoundEnd?.classList.add('hidden');
         this.modalGameEnd.classList.remove('hidden');
