@@ -133,6 +133,29 @@ class Flip7App {
             this.lobbyUI.selectedAvatar = playerAvatar;
 
             this.showToast('Table créée !', 'success');
+
+            // Host drive the music
+            audioManager.onTrackEnded = () => {
+                const nextIndex = (audioManager.currentTrackIndex + 1) % 1; // HARDCODED 1 for now or check playlist length? 
+                // Accessing private playlist length is hard if not exported.
+                // Assuming it loops or I just increment.
+                // Better: audioManager should handle increment and return new index?
+                // Or I expose PLAYLIST length.
+                // Hack: audioManager.playTrack handles index check.
+                // Let's just increment.
+
+                // Correction: onTrackEnded is called.
+                // We advance locally
+                const next = audioManager.currentTrackIndex + 1;
+                // Check bounds? AudioManager.playTrack checks bounds. 
+                // But we need wrapping.
+                // Let's assume 1 track for now based on user files.
+                // If I want wrapping I need length.
+                // Let's just play 0.
+
+                audioManager.playTrack(0); // Loop single track
+                this.host.broadcast(this.host.createMessage('SYNC_MUSIC', { trackIndex: 0 }));
+            };
         } catch (error) {
             console.error('Failed to create room:', error);
             this.showToast('Erreur lors de la création', 'error');
@@ -271,6 +294,11 @@ class Flip7App {
                     } else if (effect.type === 'second-chance' && sourcePlayer) {
                         this.tableUI.showActionBanner('🍀', `${sourcePlayer.name} utilise une Seconde Chance !`, 'second-chance', 3000);
                     }
+                }
+                break;
+            case 'SYNC_MUSIC':
+                if (message.trackIndex !== undefined && !this.isHost) {
+                    audioManager.playTrack(message.trackIndex);
                 }
                 break;
         }

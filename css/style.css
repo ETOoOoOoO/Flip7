@@ -622,6 +622,30 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Settings Modal */
+.setting-group {
+    margin-bottom: 2rem;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.volume-control input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+.volume-icon-low,
+.volume-icon-high {
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+
 @keyframes toast-out {
     from {
         opacity: 1;

@@ -127,13 +127,43 @@
                     <span class="target-info">Objectif : <span id="target-score">200</span> pts</span>
                 </div>
                 <div class="header-controls">
+                    <button id="btn-settings" class="btn btn-icon-only" title="Paramètres">⚙️</button>
                     <button id="btn-sound" class="btn btn-icon-only" title="Son Actif/Inactif">🔊</button>
-                    <button id="btn-admin" class="btn btn-icon-only hidden" title="Administration">⚙️</button>
+                    <button id="btn-admin" class="btn btn-icon-only hidden" title="Administration">🔧</button>
                     <button id="btn-leave-game" class="btn btn-ghost btn-small">Quitter</button>
                 </div>
             </div>
 
-            <!-- Zone de jeu principale -->
+            <!-- ... (Existing content) ... -->
+
+            <!-- Modal Paramètres -->
+            <div id="modal-settings" class="modal hidden">
+                <div class="modal-content modal-settings">
+                    <h2>Paramètres</h2>
+                    <div class="setting-group">
+                        <label for="input-volume-music">Musique</label>
+                        <div class="volume-control">
+                            <span class="volume-icon-low">🎵</span>
+                            <input type="range" id="input-volume-music" min="0" max="1" step="0.05" value="0.5">
+                            <span class="volume-icon-high">🔊</span>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="input-volume-sfx">Effets Sonores</label>
+                        <div class="volume-control">
+                            <span class="volume-icon-low">�</span>
+                            <input type="range" id="input-volume-sfx" min="0" max="1" step="0.05" value="0.5">
+                            <span class="volume-icon-high">🔊</span>
+                        </div>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="btn-close-settings" class="btn btn-primary">Fermer</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toast notifications -->
+            <div id="toast-container" class="toast-container"></div>
             <div class="table-area" id="table-area">
                 <!-- Deck au centre -->
                 <div class="deck-zone">
@@ -252,7 +282,7 @@
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Version footer -->
-    <div class="version-footer">v2.1.0</div>
+    <div class="version-footer">v2.2.0</div>
 
     <!-- Action Banner -->
     <div id="action-banner" class="action-banner">

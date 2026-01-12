@@ -146,6 +146,20 @@ export class GameClient {
             case MessageType.ROUND_END:
                 this.handleRoundEnd(message);
                 break;
+            case 'SYNC_MUSIC':
+                if (typeof this.onMessage === 'function') {
+                    // Pass to app via onMessage callback if not handled directly
+                    // Actually usually handled in app.onMessage? No, Client handles specific logic.
+                    // But client constructor takes onMessage.
+                    // Let's call app method via callback/option?
+                    // Client doesn't reference app directly.
+                    // But app references client.
+                    // I will expose it via onStateChange or new callback?
+                    // Easier: Add to onMessage if not standard game state?
+                    // Existing code calls onMessage at end of switch.
+                    // So App.onMessage will receive it.
+                }
+                break;
             case MessageType.GAME_END:
                 this.handleGameEnd(message);
                 break;

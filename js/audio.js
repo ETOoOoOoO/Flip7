@@ -23,6 +23,7 @@ export class AudioManager {
         // Music System
         this.currentTrackIndex = 0;
         this.musicAudio = null; // Élément HTMLAudioElement
+        this.onTrackEnded = null; // Callback externe
     }
 
     /**
@@ -79,7 +80,25 @@ export class AudioManager {
     }
 
     /**
-     * Démarre la playlist musicale
+     * Définit le volume principal (0.0 à 1.0)
+     */
+    setMasterVolume(value) {
+        if (!this.masterGain) return;
+        // Clamp value
+        const val = Math.max(0, Math.min(1, value));
+        this.masterGain.gain.value = this.isMuted ? 0 : val;
+
+        // Volume musique relatif (ex: 20% du volume maître)
+        if (this.musicAudio) {
+            this.musicAudio.volume = (this.isMuted ? 0 : val) * 0.4;
+        }
+
+        // Sauvegarder pour plus tard (si unmute)
+        this.lastVolume = val;
+    }
+
+    /**
+     * Démarre la playlist musicale ou joue une piste spécifique
      */
     startMusic() {
         if (!MUSIC_PLAYLIST.length) return;
@@ -90,13 +109,30 @@ export class AudioManager {
             this.musicAudio.volume = 0.2; // Volume d'ambiance plus bas
             this.musicAudio.muted = this.isMuted;
 
-            // Gestion de la playlist
+            // Gestion de la playlist (si locale uniquement)
             this.musicAudio.addEventListener('ended', () => {
-                this.currentTrackIndex = (this.currentTrackIndex + 1) % MUSIC_PLAYLIST.length;
-                this.playCurrentTrack();
+                if (this.onTrackEnded) {
+                    this.onTrackEnded();
+                } else {
+                    this.currentTrackIndex = (this.currentTrackIndex + 1) % MUSIC_PLAYLIST.length;
+                    this.playCurrentTrack();
+                }
             });
         }
 
+        this.playCurrentTrack();
+    }
+
+    /**
+     * Force la lecture d'une piste spécifique (Sync)
+     */
+    playTrack(index) {
+        if (index < 0 || index >= MUSIC_PLAYLIST.length) return;
+
+        // Optimisation : ne rien faire si c'est déjà la bonne piste
+        if (this.currentTrackIndex === index && this.musicAudio && !this.musicAudio.paused) return;
+
+        this.currentTrackIndex = index;
         this.playCurrentTrack();
     }
 
@@ -104,6 +140,11 @@ export class AudioManager {
         if (!this.musicAudio) return;
 
         this.musicAudio.src = MUSIC_PLAYLIST[this.currentTrackIndex];
+
+        // Appliquer le volume correct au démarrage de la piste
+        const masterVol = this.lastVolume !== undefined ? this.lastVolume : 0.5;
+        this.musicAudio.volume = (this.isMuted ? 0 : masterVol) * 0.4;
+
         this.musicAudio.play().catch(e => console.log("Autoplay bloqué ou erreur:", e));
     }
 

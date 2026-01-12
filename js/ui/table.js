@@ -93,6 +93,32 @@ export class TableUI {
         this.btnCancelTarget?.addEventListener('click', () => this.hideTargetModal());
 
         // Sound Toggle
+        // Settings UI
+        this.btnSettings = document.getElementById('btn-settings');
+        this.modalSettings = document.getElementById('modal-settings');
+        this.btnCloseSettings = document.getElementById('btn-close-settings');
+        this.inputVolumeMusic = document.getElementById('input-volume-music');
+        this.inputVolumeSfx = document.getElementById('input-volume-sfx');
+
+        this.btnSettings?.addEventListener('click', () => {
+            this.modalSettings?.classList.remove('hidden');
+        });
+
+        this.btnCloseSettings?.addEventListener('click', () => {
+            this.modalSettings?.classList.add('hidden');
+        });
+
+        this.inputVolumeMusic?.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            this.audioManager?.setMusicVolume(val);
+        });
+
+        this.inputVolumeSfx?.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            this.audioManager?.setSfxVolume(val);
+        });
+
+        // Toggle Sound (Mute) - also updates volume state
         this.btnSound?.addEventListener('click', () => {
             // Force init/resume if needed
             if (this.audioManager?.ctx?.state === 'suspended') {
