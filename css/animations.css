@@ -212,33 +212,33 @@
 
 @keyframes banner-slide-in {
     0% {
-        transform: translateY(-100%) scale(0.8);
+        transform: translate(-50%, -100%) scale(0.8);
         opacity: 0;
     }
 
     20% {
-        transform: translateY(10%) scale(1.05);
+        transform: translate(-50%, 10%) scale(1.05);
         opacity: 1;
     }
 
     40% {
-        transform: translateY(-5%) scale(1);
+        transform: translate(-50%, -5%) scale(1);
     }
 
     100% {
-        transform: translateY(0) scale(1);
+        transform: translate(-50%, 0) scale(1);
         opacity: 1;
     }
 }
 
 @keyframes banner-slide-out {
     0% {
-        transform: translateY(0) scale(1);
+        transform: translate(-50%, 0) scale(1);
         opacity: 1;
     }
 
     100% {
-        transform: translateY(-100%) scale(0.8);
+        transform: translate(-50%, -100%) scale(0.8);
         opacity: 0;
     }
 }
@@ -257,11 +257,9 @@
 
 .action-banner {
     position: fixed;
-    top: 35%;
+    top: 60%;
     left: 50%;
-    margin-left: -150px;
-    /* Half of min-width for centering */
-    transform: translateY(-100%);
+    transform: translate(-50%, -100%);
     z-index: 10000;
     padding: 1.5rem 3rem;
     border-radius: 1rem;
