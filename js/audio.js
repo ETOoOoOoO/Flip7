@@ -24,6 +24,10 @@ export class AudioManager {
         this.currentTrackIndex = 0;
         this.musicAudio = null; // Élément HTMLAudioElement
         this.onTrackEnded = null; // Callback externe
+
+        // Volumes
+        this.volumeMusic = 0.5;
+        this.volumeSfx = 0.5;
     }
 
     /**
@@ -44,10 +48,10 @@ export class AudioManager {
                 this.ctx.resume();
             }
 
-            // Master volume
+            // Master volume (SFX)
             if (!this.masterGain) {
                 this.masterGain = this.ctx.createGain();
-                this.masterGain.gain.value = 0.5; // 50% volume par défaut
+                this.masterGain.gain.value = this.volumeSfx;
                 this.masterGain.connect(this.ctx.destination);
             }
 
@@ -95,6 +99,32 @@ export class AudioManager {
 
         // Sauvegarder pour plus tard (si unmute)
         this.lastVolume = val;
+    }
+
+    /**
+     * Définit le volume des Effets Sonores (0.0 à 1.0)
+     */
+    setSfxVolume(value) {
+        // Clamp value
+        const val = Math.max(0, Math.min(1, value));
+        this.volumeSfx = val;
+
+        if (this.masterGain && !this.isMuted) {
+            this.masterGain.gain.value = val;
+        }
+    }
+
+    /**
+     * Définit le volume de la Musique (0.0 à 1.0)
+     */
+    setMusicVolume(value) {
+        // Clamp value
+        const val = Math.max(0, Math.min(1, value));
+        this.volumeMusic = val;
+
+        if (this.musicAudio) {
+            this.musicAudio.volume = val;
+        }
     }
 
     /**

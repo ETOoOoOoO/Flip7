@@ -38,6 +38,8 @@
             <div class="home-buttons">
                 <button id="btn-create" class="btn btn-primary btn-large">Créer une partie</button>
                 <button id="btn-join" class="btn btn-secondary btn-large">Rejoindre une partie</button>
+                <button id="btn-browse-games" class="btn btn-accent btn-large"
+                    style="margin-top: 10px; display: none;">📋 Tables Publiques</button>
                 <div style="height: 1rem;"></div>
                 <button id="btn-rules" class="btn btn-ghost">Règles du jeu</button>
             </div>
@@ -54,6 +56,24 @@
                     <div class="modal-buttons">
                         <button id="btn-cancel-join" class="btn btn-ghost">Annuler</button>
                         <button id="btn-confirm-join" class="btn btn-primary">Rejoindre</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Navigateur de Serveurs -->
+            <div id="modal-browser" class="modal hidden">
+                <div class="modal-content modal-browser">
+                    <h2>Tables Publiques</h2>
+                    <div class="server-list-header">
+                        <p class="text-muted">Rejoignez une partie en cours de création.</p>
+                    </div>
+                    <div id="server-list" class="server-list">
+                        <p class="loading-text">Recherche de parties...</p>
+                        <!-- Server items will be injected here -->
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="btn-refresh-servers" class="btn btn-secondary">🔄 Actualiser</button>
+                        <button id="btn-close-browser" class="btn btn-primary">Fermer</button>
                     </div>
                 </div>
             </div>
@@ -103,6 +123,13 @@
                     <div class="input-group">
                         <label for="input-target-score">Score cible</label>
                         <input type="number" id="input-target-score" value="200" min="50" max="500" step="50">
+                    </div>
+                    <div class="input-group checkbox-group" style="display: none;">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="chk-public-game">
+                            <span class="checkmark"></span>
+                            Rendre la table publique 🌍
+                        </label>
                     </div>
                 </div>
             </div>
@@ -282,7 +309,7 @@
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Version footer -->
-    <div class="version-footer">v2.2.0</div>
+    <div class="version-footer">v2.2.1</div>
 
     <!-- Action Banner -->
     <div id="action-banner" class="action-banner">

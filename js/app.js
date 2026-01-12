@@ -71,6 +71,76 @@ class Flip7App {
                 }
             }
         });
+
+        // Server Browser
+        const btnBrowse = document.getElementById('btn-browse-games');
+        const modalBrowser = document.getElementById('modal-browser');
+        const btnCloseBrowser = document.getElementById('btn-close-browser');
+        const btnRefresh = document.getElementById('btn-refresh-servers');
+        const serverList = document.getElementById('server-list');
+
+        btnBrowse?.addEventListener('click', () => {
+            audioManager.init();
+            modalBrowser?.classList.remove('hidden');
+            this.refreshServerList();
+        });
+
+        btnCloseBrowser?.addEventListener('click', () => {
+            modalBrowser?.classList.add('hidden');
+        });
+
+        btnRefresh?.addEventListener('click', () => {
+            this.refreshServerList();
+        });
+
+        // Checkbox Public Game
+        const chkPublic = document.getElementById('chk-public-game');
+        if (chkPublic) {
+            chkPublic.addEventListener('change', (e) => {
+                // Logic to register/unregister from public list (requires backend)
+                console.log('Public game toggle:', e.target.checked);
+            });
+        }
+    }
+
+    /**
+     * Rafraîchit la liste des serveurs (Simulation)
+     */
+    refreshServerList() {
+        const list = document.getElementById('server-list');
+        if (!list) return;
+
+        list.innerHTML = '<p class="loading-text">Recherche de parties...</p>';
+
+        // Simulation d'appel réseau
+        setTimeout(() => {
+            // Ici, nous devrions appeler un serveur central ou un "Lobby Peer"
+            // Pour l'instant, on simule sans backend
+            const mockServers = []; // Rien trouvé (normal sans backend)
+
+            if (mockServers.length === 0) {
+                list.innerHTML = `
+                    <p class="empty-text">Aucune partie publique trouvée.<br>
+                    <span style="font-size: 0.8em; opacity: 0.7;">(Nécessite un serveur de signalement dédié)</span>
+                    </p>
+                 `;
+            } else {
+                // Render list (Example)
+                /*
+                list.innerHTML = mockServers.map(s => `
+                    <div class="server-item">
+                        <div class="server-info">
+                            <h4>${s.name}</h4>
+                            <p>${s.players}/${s.max} Joueurs • ${s.state}</p>
+                        </div>
+                        <div class="server-actions">
+                            <button class="btn btn-primary btn-small" onclick="window.flip7App.joinRoom('${s.code}')">Rejoindre</button>
+                        </div>
+                    </div>
+                `).join('');
+                */
+            }
+        }, 1000);
     }
 
     /**
