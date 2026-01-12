@@ -44,15 +44,12 @@ export class Deck {
 
         // Actions
         for (let i = 0; i < 3; i++) {
-            this.cards.push(new Card(CardType.ACTION, 0, ActionType.FREEZE));
-        }
-        for (let i = 0; i < 3; i++) {
             this.cards.push(new Card(CardType.ACTION, 0, ActionType.FLIP_THREE));
         }
         for (let i = 0; i < 2; i++) {
             this.cards.push(new Card(CardType.ACTION, 0, ActionType.SECOND_CHANCE));
         }
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 6; i++) {
             this.cards.push(new Card(CardType.ACTION, 0, ActionType.STOP));
         }
 
