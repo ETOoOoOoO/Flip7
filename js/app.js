@@ -438,4 +438,15 @@ class Flip7App {
 // Démarre l'application
 document.addEventListener('DOMContentLoaded', () => {
     window.flip7App = new Flip7App();
+
+    // Global audio resume handler
+    const resumeAudio = () => {
+        if (audioManager.ctx && audioManager.ctx.state === 'suspended') {
+            audioManager.ctx.resume().then(() => {
+                console.log('AudioContext resumed via global click');
+            });
+        }
+    };
+    document.addEventListener('click', resumeAudio);
+    document.addEventListener('touchstart', resumeAudio);
 });

@@ -20,15 +20,25 @@ export class AudioManager {
 
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
-            this.ctx = new AudioContext();
+            if (!this.ctx) {
+                this.ctx = new AudioContext();
+            } else if (this.ctx.state === 'closed') {
+                this.ctx = new AudioContext();
+            }
+
+            if (this.ctx.state === 'suspended') {
+                this.ctx.resume();
+            }
 
             // Master volume
-            this.masterGain = this.ctx.createGain();
-            this.masterGain.gain.value = 0.5; // 50% volume par défaut
-            this.masterGain.connect(this.ctx.destination);
+            if (!this.masterGain) {
+                this.masterGain = this.ctx.createGain();
+                this.masterGain.gain.value = 0.5; // 50% volume par défaut
+                this.masterGain.connect(this.ctx.destination);
+            }
 
             this.initialized = true;
-            console.log('Audio Context initialized');
+            console.log('Audio Context initialized', this.ctx.state);
         } catch (e) {
             console.error('Web Audio API not supported', e);
         }
