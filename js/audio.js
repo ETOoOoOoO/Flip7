@@ -1,3 +1,12 @@
+// Listes de fichiers audio (Mise à jour manuelle requise pour l'instant)
+const MUSIC_PLAYLIST = [
+    'Asset/Sound/GameLoop/The Coconut Song - (Da Coconut Nut).mp3'
+];
+
+const BUST_SOUNDS = [
+    'Asset/Sound/Bust/FAH Echo Sound Effect.mp3'
+];
+
 /**
  * AudioManager - Gestion des effets sonores via Web Audio API
  */
@@ -10,6 +19,10 @@ export class AudioManager {
 
         // Initialiser au premier clic utilisateur nécessite une interaction
         this.initialized = false;
+
+        // Music System
+        this.currentTrackIndex = 0;
+        this.musicAudio = null; // Élément HTMLAudioElement
     }
 
     /**
@@ -39,6 +52,10 @@ export class AudioManager {
 
             this.initialized = true;
             console.log('Audio Context initialized', this.ctx.state);
+
+            // Démarrer la musique d'ambiance
+            this.startMusic();
+
         } catch (e) {
             console.error('Web Audio API not supported', e);
         }
@@ -52,7 +69,42 @@ export class AudioManager {
         if (this.masterGain) {
             this.masterGain.gain.value = this.isMuted ? 0 : 0.5;
         }
+
+        // Mute la musique aussi
+        if (this.musicAudio) {
+            this.musicAudio.muted = this.isMuted;
+        }
+
         return this.isMuted;
+    }
+
+    /**
+     * Démarre la playlist musicale
+     */
+    startMusic() {
+        if (!MUSIC_PLAYLIST.length) return;
+
+        // Création de l'élément audio s'il n'existe pas
+        if (!this.musicAudio) {
+            this.musicAudio = new Audio();
+            this.musicAudio.volume = 0.2; // Volume d'ambiance plus bas
+            this.musicAudio.muted = this.isMuted;
+
+            // Gestion de la playlist
+            this.musicAudio.addEventListener('ended', () => {
+                this.currentTrackIndex = (this.currentTrackIndex + 1) % MUSIC_PLAYLIST.length;
+                this.playCurrentTrack();
+            });
+        }
+
+        this.playCurrentTrack();
+    }
+
+    playCurrentTrack() {
+        if (!this.musicAudio) return;
+
+        this.musicAudio.src = MUSIC_PLAYLIST[this.currentTrackIndex];
+        this.musicAudio.play().catch(e => console.log("Autoplay bloqué ou erreur:", e));
     }
 
     /**
@@ -181,9 +233,16 @@ export class AudioManager {
     playBust() {
         if (!this.initialized || this.isMuted) return;
 
-        const t = this.ctx.currentTime;
+        // 1. Jouer le son FX aléatoire
+        if (BUST_SOUNDS.length > 0) {
+            const randomSound = BUST_SOUNDS[Math.floor(Math.random() * BUST_SOUNDS.length)];
+            const fx = new Audio(randomSound);
+            fx.volume = 0.6; // Un peu plus fort que l'ambiance
+            fx.play().catch(e => console.log("Bust sound error:", e));
+        }
 
-        // Sawtooth wave falling down
+        // 2. Jouer le son synthétique en background (optionnel, on le garde pour le "punch" immédiat)
+        const t = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         osc.type = 'sawtooth';
 
@@ -195,7 +254,7 @@ export class AudioManager {
         osc.frequency.setValueAtTime(200, t);
         osc.frequency.exponentialRampToValueAtTime(50, t + 0.5);
 
-        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.setValueAtTime(0.2, t); // Réduit car on a le sample audio
         gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
 
         osc.start(t);
