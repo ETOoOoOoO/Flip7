@@ -149,7 +149,11 @@ class Flip7App {
                         this.showScreen('screen-home');
                     }
                 },
-                (message) => this.onMessage(message)
+                (message) => this.onMessage(message),
+                {
+                    onImmediateAction: (card) => this.tableUI?.showTargetModalForAction(card),
+                    onAnimation: (type, data) => this.tableUI?.playAnimation(type, data)
+                }
             );
 
             await this.client.join(roomCode, playerName, playerAvatar);
