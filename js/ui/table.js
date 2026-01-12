@@ -330,15 +330,22 @@ export class TableUI {
     showMessage(text, type = '', duration = 2000) {
         if (!this.gameMessage || !this.gameMessageText) return;
 
+        // Clear previous timeout
+        if (this.messageTimeout) {
+            clearTimeout(this.messageTimeout);
+            this.messageTimeout = null;
+        }
+
         this.gameMessageText.textContent = text;
-        this.gameMessage.className = 'game-message';
+        this.gameMessage.className = 'game-message'; // Reset classes
         if (type) {
-            this.gameMessage.classList.add(`message - ${type} `);
+            this.gameMessage.classList.add(`message-${type}`);
         }
         this.gameMessage.classList.remove('hidden');
 
-        setTimeout(() => {
+        this.messageTimeout = setTimeout(() => {
             this.gameMessage.classList.add('hidden');
+            this.messageTimeout = null;
         }, duration);
     }
 

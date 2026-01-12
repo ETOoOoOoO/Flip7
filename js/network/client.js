@@ -242,7 +242,9 @@ export class GameClient {
 
         // Action immédiate pour le joueur local
         if (message.playerId === this.localPlayer?.id && card.type === 'action') {
+            console.log('Action card drawn:', card);
             if (card.subType === 'freeze' || card.subType === 'flip-three' || card.subType === 'stop') {
+                console.log('Triggering immediate action:', card.subType);
                 this.onImmediateAction?.(card);
             }
         }
