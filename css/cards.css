@@ -220,6 +220,13 @@
     color: #15803d;
 }
 
+/* Stop */
+.card-action[data-type="stop"] .card-front {
+    background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
+    color: #dc2626;
+    border: 2px solid #ef4444;
+}
+
 /* ==========================================
    États des cartes
    ========================================== */

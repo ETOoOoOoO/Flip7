@@ -609,12 +609,17 @@ body {
     position: fixed;
     bottom: 0.5rem;
     right: 1rem;
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    opacity: 0.5;
-    z-index: 50;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    z-index: 9999;
     pointer-events: none;
     font-family: monospace;
+    font-weight: bold;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @keyframes toast-out {

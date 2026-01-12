@@ -16,10 +16,10 @@
 
     <!-- Stylesheets -->
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/style.css?v=1.6.5">
-    <link rel="stylesheet" href="css/cards.css?v=1.6.5">
-    <link rel="stylesheet" href="css/table.css?v=1.6.5">
-    <link rel="stylesheet" href="css/animations.css?v=1.6.5">
+    <link rel="stylesheet" href="css/style.css?v=1.7.1">
+    <link rel="stylesheet" href="css/cards.css?v=1.7.1">
+    <link rel="stylesheet" href="css/table.css?v=1.7.1">
+    <link rel="stylesheet" href="css/animations.css?v=1.7.1">
 
     <!-- PeerJS -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
@@ -35,227 +35,233 @@
             </div>
 
             <div class="home-buttons">
-                <button id="btn-create" class="btn btn-primary btn-large">
-                    <span class="btn-icon">🎴</span>
-                    Créer une table
-                </button>
-                <button id="btn-join" class="btn btn-secondary btn-large">
-                    <span class="btn-icon">🚪</span>
-                    Rejoindre une table
-                </button>
-            </div>
+                <div class="logo-container">
+                    <h1 class="logo">FLIP<span class="logo-7">7</span></h1>
+                    <p class="tagline">Le jeu de cartes où chaque pioche compte !</p>
+                </div>
 
-            <!-- Modal pour rejoindre -->
-            <div id="modal-join" class="modal hidden">
-                <div class="modal-content">
-                    <h2>Rejoindre une table</h2>
-                    <div class="input-group">
-                        <label for="input-room-code">Code de la table</label>
-                        <input type="text" id="input-room-code" placeholder="FLIP-XXXX" maxlength="9"
-                            autocomplete="off">
-                    </div>
-                    <div class="modal-buttons">
-                        <button id="btn-cancel-join" class="btn btn-ghost">Annuler</button>
-                        <button id="btn-confirm-join" class="btn btn-primary">Rejoindre</button>
+                <div class="home-buttons">
+                    <button id="btn-create" class="btn btn-primary btn-large">
+                        <span class="btn-icon">🎴</span>
+                        Créer une table
+                    </button>
+                    <button id="btn-join" class="btn btn-secondary btn-large">
+                        <span class="btn-icon">🚪</span>
+                        Rejoindre une table
+                    </button>
+                </div>
+
+                <!-- Modal pour rejoindre -->
+                <div id="modal-join" class="modal hidden">
+                    <div class="modal-content">
+                        <h2>Rejoindre une table</h2>
+                        <div class="input-group">
+                            <label for="input-room-code">Code de la table</label>
+                            <input type="text" id="input-room-code" placeholder="FLIP-XXXX" maxlength="9"
+                                autocomplete="off">
+                        </div>
+                        <div class="modal-buttons">
+                            <button id="btn-cancel-join" class="btn btn-ghost">Annuler</button>
+                            <button id="btn-confirm-join" class="btn btn-primary">Rejoindre</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Écran du Lobby -->
-    <div id="screen-lobby" class="screen">
-        <div class="lobby-container">
-            <div class="lobby-header">
-                <h2>Salle d'attente</h2>
-                <div class="room-code-display">
-                    <span class="room-code-label">Code de la table :</span>
-                    <span id="room-code" class="room-code">FLIP-XXXX</span>
-                    <button id="btn-copy-code" class="btn btn-icon-only" title="Copier le code">📋</button>
-                </div>
-            </div>
-
-            <div class="lobby-content">
-                <!-- Configuration du joueur -->
-                <div class="player-config">
-                    <h3>Ton profil</h3>
-                    <div class="input-group">
-                        <label for="input-player-name">Pseudo</label>
-                        <input type="text" id="input-player-name" placeholder="Ton pseudo..." maxlength="25"
-                            autocomplete="off">
+        <!-- Écran du Lobby -->
+        <div id="screen-lobby" class="screen">
+            <div class="lobby-container">
+                <div class="lobby-header">
+                    <h2>Salle d'attente</h2>
+                    <div class="room-code-display">
+                        <span class="room-code-label">Code de la table :</span>
+                        <span id="room-code" class="room-code">FLIP-XXXX</span>
+                        <button id="btn-copy-code" class="btn btn-icon-only" title="Copier le code">📋</button>
                     </div>
-                    <div class="avatar-selector">
-                        <label>Avatar</label>
-                        <div class="avatars-grid" id="avatars-grid">
-                            <!-- Avatars injectés par JS -->
+                </div>
+
+                <div class="lobby-content">
+                    <!-- Configuration du joueur -->
+                    <div class="player-config">
+                        <h3>Ton profil</h3>
+                        <div class="input-group">
+                            <label for="input-player-name">Pseudo</label>
+                            <input type="text" id="input-player-name" placeholder="Ton pseudo..." maxlength="25"
+                                autocomplete="off">
+                        </div>
+                        <div class="avatar-selector">
+                            <label>Avatar</label>
+                            <div class="avatars-grid" id="avatars-grid">
+                                <!-- Avatars injectés par JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Liste des joueurs -->
+                    <div class="players-list-container">
+                        <h3>Joueurs <span id="player-count">(0/10)</span></h3>
+                        <ul id="players-list" class="players-list">
+                            <!-- Joueurs injectés par JS -->
+                        </ul>
+                    </div>
+
+                    <!-- Paramètres (hôte uniquement) -->
+                    <div id="host-settings" class="host-settings hidden">
+                        <h3>Paramètres</h3>
+                        <div class="input-group">
+                            <label for="input-target-score">Score cible</label>
+                            <input type="number" id="input-target-score" value="200" min="50" max="500" step="50">
                         </div>
                     </div>
                 </div>
 
-                <!-- Liste des joueurs -->
-                <div class="players-list-container">
-                    <h3>Joueurs <span id="player-count">(0/10)</span></h3>
-                    <ul id="players-list" class="players-list">
+                <div class="lobby-footer">
+                    <button id="btn-leave-lobby" class="btn btn-ghost">Quitter</button>
+                    <button id="btn-start-game" class="btn btn-primary btn-large hidden">
+                        Commencer la partie
+                    </button>
+                    <p id="waiting-message" class="waiting-message">En attente de l'hôte...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de jeu (Table) -->
+        <div id="screen-game" class="screen">
+            <div class="game-container">
+                <!-- Header avec scores -->
+                <div class="game-header">
+                    <div class="game-info">
+                        <span class="round-info">Manche <span id="round-number">1</span></span>
+                        <span class="target-info">Objectif : <span id="target-score">200</span> pts</span>
+                    </div>
+                    <button id="btn-admin" class="btn btn-icon-only hidden" title="Administration">⚙️</button>
+                    <button id="btn-leave-game" class="btn btn-ghost btn-small">Quitter</button>
+                </div>
+
+                <!-- Zone de jeu principale -->
+                <div class="table-area" id="table-area">
+                    <!-- Deck au centre -->
+                    <div class="deck-zone">
+                        <div id="deck" class="deck">
+                            <div class="deck-cards"></div>
+                            <span class="deck-count" id="deck-count">94</span>
+                        </div>
+                        <div id="current-card-zone" class="current-card-zone">
+                            <!-- Carte courante affichée ici -->
+                        </div>
+                    </div>
+
+                    <!-- Joueurs autour de la table (positionnés par JS) -->
+                    <div id="players-around" class="players-around">
                         <!-- Joueurs injectés par JS -->
-                    </ul>
-                </div>
-
-                <!-- Paramètres (hôte uniquement) -->
-                <div id="host-settings" class="host-settings hidden">
-                    <h3>Paramètres</h3>
-                    <div class="input-group">
-                        <label for="input-target-score">Score cible</label>
-                        <input type="number" id="input-target-score" value="200" min="50" max="500" step="50">
-                    </div>
-                </div>
-            </div>
-
-            <div class="lobby-footer">
-                <button id="btn-leave-lobby" class="btn btn-ghost">Quitter</button>
-                <button id="btn-start-game" class="btn btn-primary btn-large hidden">
-                    Commencer la partie
-                </button>
-                <p id="waiting-message" class="waiting-message">En attente de l'hôte...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Écran de jeu (Table) -->
-    <div id="screen-game" class="screen">
-        <div class="game-container">
-            <!-- Header avec scores -->
-            <div class="game-header">
-                <div class="game-info">
-                    <span class="round-info">Manche <span id="round-number">1</span></span>
-                    <span class="target-info">Objectif : <span id="target-score">200</span> pts</span>
-                </div>
-                <button id="btn-admin" class="btn btn-icon-only hidden" title="Administration">⚙️</button>
-                <button id="btn-leave-game" class="btn btn-ghost btn-small">Quitter</button>
-            </div>
-
-            <!-- Zone de jeu principale -->
-            <div class="table-area" id="table-area">
-                <!-- Deck au centre -->
-                <div class="deck-zone">
-                    <div id="deck" class="deck">
-                        <div class="deck-cards"></div>
-                        <span class="deck-count" id="deck-count">94</span>
-                    </div>
-                    <div id="current-card-zone" class="current-card-zone">
-                        <!-- Carte courante affichée ici -->
                     </div>
                 </div>
 
-                <!-- Joueurs autour de la table (positionnés par JS) -->
-                <div id="players-around" class="players-around">
-                    <!-- Joueurs injectés par JS -->
-                </div>
-            </div>
-
-            <!-- Zone du joueur local (en bas) -->
-            <div class="local-player-zone">
-                <div class="local-player-info">
-                    <div class="local-avatar" id="local-avatar"></div>
-                    <div class="local-details">
-                        <span class="local-name" id="local-name">Toi</span>
-                        <span class="local-score">Score : <span id="local-score">0</span> pts</span>
+                <!-- Zone du joueur local (en bas) -->
+                <div class="local-player-zone">
+                    <div class="local-player-info">
+                        <div class="local-avatar" id="local-avatar"></div>
+                        <div class="local-details">
+                            <span class="local-name" id="local-name">Toi</span>
+                            <span class="local-score">Score : <span id="local-score">0</span> pts</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="local-cards" id="local-cards">
-                    <!-- Cartes du joueur local -->
-                </div>
-
-                <div class="action-buttons" id="action-buttons">
-                    <button id="btn-hit" class="btn btn-action btn-hit" disabled>
-                        🎴 Piocher
-                    </button>
-                    <button id="btn-stay" class="btn btn-action btn-stay" disabled>
-                        ✋ Rester
-                    </button>
-                </div>
-            </div>
-
-            <!-- Messages de jeu -->
-            <div id="game-message" class="game-message hidden">
-                <span id="game-message-text"></span>
-            </div>
-
-            <!-- Modal de fin de round -->
-            <div id="modal-round-end" class="modal hidden">
-                <div class="modal-content modal-round-end">
-                    <h2 id="round-end-title">Fin de la manche !</h2>
-                    <div id="round-scores" class="round-scores">
-                        <!-- Scores injectés par JS -->
+                    <div class="local-cards" id="local-cards">
+                        <!-- Cartes du joueur local -->
                     </div>
-                    <button id="btn-next-round" class="btn btn-primary hidden">Manche suivante</button>
-                    <p id="waiting-next-round" class="waiting-message">En attente de l'hôte...</p>
-                </div>
-            </div>
 
-            <!-- Modal de fin de partie -->
-            <div id="modal-game-end" class="modal hidden">
-                <div class="modal-content modal-game-end">
-                    <h2>🏆 Partie terminée !</h2>
-                    <div id="winner-display" class="winner-display">
-                        <!-- Gagnant injecté par JS -->
-                    </div>
-                    <div id="final-scores" class="final-scores">
-                        <!-- Scores finaux injectés par JS -->
-                    </div>
-                    <button id="btn-play-again" class="btn btn-action hidden"
-                        style="margin-bottom: 10px; background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);">↻
-                        Rejouer (Hôte)</button>
-                    <button id="btn-back-home" class="btn btn-primary">Retour à l'accueil</button>
-                </div>
-            </div>
-
-            <!-- Modal de sélection de cible (pour cartes action) -->
-            <div id="modal-target" class="modal hidden">
-                <div class="modal-content">
-                    <h2 id="target-modal-title">Choisir une cible</h2>
-                    <div id="target-players" class="target-players">
-                        <!-- Joueurs cibles injectés par JS -->
-                    </div>
-                    <button id="btn-cancel-target" class="btn btn-ghost">Annuler</button>
-                </div>
-            </div>
-            <!-- Modal Admin -->
-            <div id="modal-admin" class="modal hidden">
-                <div class="modal-content modal-admin">
-                    <h2>Administration</h2>
-
-                    <div class="admin-section">
-                        <h3>Gestion de la partie</h3>
-                        <button id="btn-reset-game" class="btn btn-danger full-width">
-                            ⚠️ Réinitialiser la partie
+                    <div class="action-buttons" id="action-buttons">
+                        <button id="btn-hit" class="btn btn-action btn-hit" disabled>
+                            🎴 Piocher
                         </button>
-                        <p class="text-sm text-muted mt-2">Remet tous les scores à 0 et recommence la manche 1.</p>
+                        <button id="btn-stay" class="btn btn-action btn-stay" disabled>
+                            ✋ Rester
+                        </button>
                     </div>
+                </div>
 
-                    <div class="admin-section">
-                        <h3>Joueurs</h3>
-                        <ul id="admin-players-list" class="admin-players-list">
-                            <!-- Liste des joueurs injectée par JS -->
-                        </ul>
+                <!-- Messages de jeu -->
+                <div id="game-message" class="game-message hidden">
+                    <span id="game-message-text"></span>
+                </div>
+
+                <!-- Modal de fin de round -->
+                <div id="modal-round-end" class="modal hidden">
+                    <div class="modal-content modal-round-end">
+                        <h2 id="round-end-title">Fin de la manche !</h2>
+                        <div id="round-scores" class="round-scores">
+                            <!-- Scores injectés par JS -->
+                        </div>
+                        <button id="btn-next-round" class="btn btn-primary hidden">Manche suivante</button>
+                        <p id="waiting-next-round" class="waiting-message">En attente de l'hôte...</p>
                     </div>
+                </div>
 
-                    <div class="modal-buttons">
-                        <button id="btn-close-admin" class="btn btn-primary">Fermer</button>
+                <!-- Modal de fin de partie -->
+                <div id="modal-game-end" class="modal hidden">
+                    <div class="modal-content modal-game-end">
+                        <h2>🏆 Partie terminée !</h2>
+                        <div id="winner-display" class="winner-display">
+                            <!-- Gagnant injecté par JS -->
+                        </div>
+                        <div id="final-scores" class="final-scores">
+                            <!-- Scores finaux injectés par JS -->
+                        </div>
+                        <button id="btn-play-again" class="btn btn-action hidden"
+                            style="margin-bottom: 10px; background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);">↻
+                            Rejouer (Hôte)</button>
+                        <button id="btn-back-home" class="btn btn-primary">Retour à l'accueil</button>
+                    </div>
+                </div>
+
+                <!-- Modal de sélection de cible (pour cartes action) -->
+                <div id="modal-target" class="modal hidden">
+                    <div class="modal-content">
+                        <h2 id="target-modal-title">Choisir une cible</h2>
+                        <div id="target-players" class="target-players">
+                            <!-- Joueurs cibles injectés par JS -->
+                        </div>
+                        <button id="btn-cancel-target" class="btn btn-ghost">Annuler</button>
+                    </div>
+                </div>
+                <!-- Modal Admin -->
+                <div id="modal-admin" class="modal hidden">
+                    <div class="modal-content modal-admin">
+                        <h2>Administration</h2>
+
+                        <div class="admin-section">
+                            <h3>Gestion de la partie</h3>
+                            <button id="btn-reset-game" class="btn btn-danger full-width">
+                                ⚠️ Réinitialiser la partie
+                            </button>
+                            <p class="text-sm text-muted mt-2">Remet tous les scores à 0 et recommence la manche 1.</p>
+                        </div>
+
+                        <div class="admin-section">
+                            <h3>Joueurs</h3>
+                            <ul id="admin-players-list" class="admin-players-list">
+                                <!-- Liste des joueurs injectée par JS -->
+                            </ul>
+                        </div>
+
+                        <div class="modal-buttons">
+                            <button id="btn-close-admin" class="btn btn-primary">Fermer</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Toast notifications -->
-    <div id="toast-container" class="toast-container"></div>
+        <!-- Toast notifications -->
+        <div id="toast-container" class="toast-container"></div>
 
-    <!-- Version footer -->
-    <div class="version-footer">v1.6.5</div>
+        <!-- Version footer -->
+        <div class="version-footer">v1.7.1</div>
 
-    <!-- Scripts -->
-    <script type="module" src="js/app.js"></script>
+        <!-- Scripts -->
+        <script type="module" src="js/app.js"></script>
 </body>
 
 </html>
