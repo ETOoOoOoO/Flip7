@@ -409,6 +409,7 @@ export class TableUI {
                 <button class="target-player-btn" data-player-id="${player.id}">
                 <span class="target-avatar">${player.avatar}</span>
                 <span class="target-name">${player.name}${player.id === localPlayerId ? ' (Toi)' : ''}</span>
+                <span class="target-score">${player.score} pts</span>
             </button>
                 `).join('');
 

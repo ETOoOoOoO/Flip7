@@ -222,9 +222,12 @@
 
 /* Stop */
 .card-action[data-type="stop"] .card-front {
-    background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
-    color: #dc2626;
-    border: 2px solid #ef4444;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #7f1d1d 100%);
+    color: #ffffff;
+    border: 3px solid #fca5a5;
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.15);
+    font-weight: 900;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* ==========================================
