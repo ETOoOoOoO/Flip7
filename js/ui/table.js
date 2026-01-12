@@ -528,7 +528,7 @@ export class TableUI {
                     effectOverlay.remove();
                 }, 3000);
             }
-        } else if (type === 'flip-three-card' || type === 'flip-three-bust') {
+        } else if (type === 'flip-three-card' || type === 'flip-three-bust' || type === 'flip-three-action') {
             // Effect on target
             const targetId = data.effects[0].targetId;
             const targetEl = getTargetElement(targetId);

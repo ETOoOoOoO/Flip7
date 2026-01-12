@@ -254,7 +254,14 @@ export class Round {
                 for (let i = 0; i < 3; i++) {
                     const card = this.deck.draw();
                     if (card) {
-                        if (card.isNumber() && Rules.checkBust(target, card)) {
+                        if (card.isAction()) {
+                            target.addCard(card);
+                            result.effects.push({
+                                type: 'flip-three-action',
+                                targetId,
+                                card: card.serialize()
+                            });
+                        } else if (card.isNumber() && Rules.checkBust(target, card)) {
                             target.addCard(card);
                             this.lastCardDealt = card; // Store for Second Chance
 

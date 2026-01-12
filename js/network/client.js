@@ -286,6 +286,8 @@ export class GameClient {
                 } else if (effect.type === 'flip-three-bust') {
                     target.addCard(Card.deserialize(effect.card));
                     target.status = 'busted';
+                } else if (effect.type === 'flip-three-action' && effect.card) {
+                    target.addCard(Card.deserialize(effect.card));
                 }
             }
         }
