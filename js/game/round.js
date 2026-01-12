@@ -256,12 +256,26 @@ export class Round {
                     if (card) {
                         if (card.isNumber() && Rules.checkBust(target, card)) {
                             target.addCard(card);
-                            target.status = PlayerStatus.BUSTED;
-                            result.effects.push({
-                                type: 'flip-three-bust',
-                                targetId,
-                                card: card.serialize()
-                            });
+                            this.lastCardDealt = card; // Store for Second Chance
+
+                            // Check if target has Second Chance
+                            if (target.hasSecondChance) {
+                                result.effects.push({
+                                    type: 'flip-three-bust-chance',
+                                    targetId,
+                                    card: card.serialize(),
+                                    canUseSecondChance: true
+                                });
+                                result.canUseSecondChance = true;
+                                result.secondChancePlayerId = targetId;
+                            } else {
+                                target.status = PlayerStatus.BUSTED;
+                                result.effects.push({
+                                    type: 'flip-three-bust',
+                                    targetId,
+                                    card: card.serialize()
+                                });
+                            }
                             break;
                         } else {
                             target.addCard(card);

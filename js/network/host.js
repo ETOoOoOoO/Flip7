@@ -477,6 +477,21 @@ export class GameHost {
             this.onAnimation?.(effectType, result);
         }
 
+        // Handle Second Chance for Flip3 bust
+        if (result.canUseSecondChance && result.secondChancePlayerId) {
+            const targetConn = this.connections.get(result.secondChancePlayerId);
+            targetConn?.send(createMessage(MessageType.SECOND_CHANCE_PROMPT, {}));
+
+            // Track pending for host if affected
+            if (result.secondChancePlayerId === this.localPlayer.id) {
+                this.pendingSecondChance = true;
+            }
+
+            // Don't advance turn - wait for Second Chance response
+            this.notifyStateChange();
+            return;
+        }
+
         // After action, if target was affected (STAYED/BUSTED/FROZEN), check if they were current
         // and advance if needed
         const targetPlayer = this.players.find(p => p.id === message.targetId);
