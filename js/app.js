@@ -7,6 +7,7 @@ import { GameClient } from './network/client.js';
 import { LobbyUI } from './ui/lobby.js';
 import { TableUI } from './ui/table.js';
 import { getRandomAvatar } from './ui/avatars.js';
+import { audioManager } from './audio.js';
 
 class Flip7App {
     constructor() {
@@ -32,11 +33,13 @@ class Flip7App {
     bindHomeEvents() {
         // Bouton Créer
         document.getElementById('btn-create')?.addEventListener('click', () => {
+            audioManager.init();
             this.createRoom();
         });
 
         // Bouton Rejoindre
         document.getElementById('btn-join')?.addEventListener('click', () => {
+            audioManager.init();
             document.getElementById('modal-join')?.classList.remove('hidden');
         });
 
@@ -46,6 +49,7 @@ class Flip7App {
         });
 
         document.getElementById('btn-confirm-join')?.addEventListener('click', () => {
+            audioManager.init();
             const code = document.getElementById('input-room-code')?.value?.trim();
             const btn = document.getElementById('btn-confirm-join');
             if (code && btn && !btn.disabled) {
@@ -97,7 +101,8 @@ class Flip7App {
             onLeave: () => this.leaveGame(),
             onBackHome: () => this.backToHome(),
             onKick: (playerId) => this.kickPlayer(playerId),
-            onResetGame: () => this.resetGame()
+            onResetGame: () => this.resetGame(),
+            audioManager: audioManager
         });
     }
 

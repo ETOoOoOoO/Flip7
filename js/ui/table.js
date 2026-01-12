@@ -18,6 +18,7 @@ export class TableUI {
         this.onBackHome = options.onBackHome;
         this.onKick = options.onKick;
         this.onResetGame = options.onResetGame;
+        this.audioManager = options.audioManager;
 
         this.bindElements();
         this.bindEvents();
@@ -71,8 +72,16 @@ export class TableUI {
     }
 
     bindEvents() {
-        this.btnHit?.addEventListener('click', () => this.onHit?.());
-        this.btnStay?.addEventListener('click', () => this.onStay?.());
+        this.btnHit?.addEventListener('click', () => {
+            this.audioManager?.playClick();
+            this.onHit?.();
+        });
+        this.btnStay?.addEventListener('click', () => {
+            // Stay sound will be played on success/feedback? Or simple click here?
+            // Let's play click here, and specific Stay sound on animation/feedback
+            this.audioManager?.playClick();
+            this.onStay?.();
+        });
         this.btnNextRound?.addEventListener('click', () => this.onNextRound?.());
         this.btnBackHome?.addEventListener('click', () => this.onBackHome?.());
         this.btnCancelTarget?.addEventListener('click', () => this.hideTargetModal());
@@ -176,7 +185,14 @@ export class TableUI {
 
         // Cartes du joueur
         if (this.localCards) {
+            const previousCount = this.localCards.children.length;
             this.localCards.innerHTML = '';
+
+            // Sound only if we added cards (dealing)
+            if (player.cards.length > previousCount && player.status !== 'busted' && player.status !== PlayerStatus.BUSTED) {
+                this.audioManager?.playCardFlip();
+            }
+
             for (const card of player.cards) {
                 const cardData = card.serialize ? card : card;
                 const cardObj = card.serialize ? card : Card.deserialize(cardData);
@@ -496,6 +512,11 @@ export class TableUI {
     playAnimation(type, data) {
         console.log(`Playing animation: ${type} `, data);
 
+        // Sound Effects
+        if (type === 'freeze') this.audioManager?.playActionEffect('freeze');
+        if (type === 'stop') this.audioManager?.playActionEffect('stop');
+        if (type === 'flip-three-card' || type === 'flip-three-action') this.audioManager?.playActionEffect('flip-three');
+
         // Find target element (avatar)
         const getTargetElement = (playerId) => {
             if (playerId === this.currentLocalPlayerId) {
@@ -620,6 +641,8 @@ export class TableUI {
     showGameEndModal(players) {
         if (!this.modalGameEnd) return;
 
+        this.audioManager?.playVictory();
+
         const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
         const winner = sortedPlayers[0];
 
@@ -702,6 +725,10 @@ export class TableUI {
             'action': 'stop',
             'info': 'stop'
         };
+
+        // Sounds
+        if (type === 'bust') this.audioManager?.playBust();
+        if (type === 'flip7') this.audioManager?.playFlip7();
 
         // Get icon based on type
         const iconMap = {
