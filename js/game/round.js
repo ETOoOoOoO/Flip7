@@ -39,6 +39,8 @@ export class Round {
 
         // Distribution initiale (une carte chacun)
         const dealtCards = [];
+        // ON COMMENCE A ZERO CARTES (modif user request)
+        /*
         for (let i = 0; i < this.players.length; i++) {
             const playerIndex = (this.dealerIndex + 1 + i) % this.players.length;
             const player = this.players[playerIndex];
@@ -58,6 +60,7 @@ export class Round {
                 }
             }
         }
+        */
 
         this.phase = RoundPhase.PLAYING;
         return dealtCards;
