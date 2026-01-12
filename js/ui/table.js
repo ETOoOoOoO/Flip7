@@ -319,8 +319,11 @@ export class TableUI {
             `;
             this.btnHit = document.getElementById('btn-hit');
             this.btnStay = document.getElementById('btn-stay');
+
             this.btnHit?.addEventListener('click', () => this.onHit?.());
             this.btnStay?.addEventListener('click', () => this.onStay?.());
+
+
         }
     }
 
