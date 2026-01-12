@@ -246,18 +246,16 @@ class Flip7App {
                 }
                 break;
             case 'ACTION_PLAYED':
-                // Show message and animation for action cards
+                // Show action banner for action cards
                 if (message.effects && message.effects.length > 0) {
                     const effect = message.effects[0];
                     const sourcePlayer = this.currentState?.players?.find(p => p.id === message.playerId);
                     const targetPlayer = this.currentState?.players?.find(p => p.id === message.targetId);
 
                     if (effect.type === 'stop' && sourcePlayer && targetPlayer) {
-                        this.tableUI.showMessage(`🛑 ${sourcePlayer.name} a STOP ${targetPlayer.name} !`, 'action', 3000);
-                        this.tableUI.playAnimation('stop', message);
+                        this.tableUI.showActionBanner('🛑', `${sourcePlayer.name} a STOPPÉ ${targetPlayer.name} !`, 'stop', 3000);
                     } else if (effect.type === 'flip-three-card' || effect.type === 'flip-three-bust') {
-                        this.tableUI.showMessage(`🔄 ${sourcePlayer?.name} force ${targetPlayer?.name} à piocher 3 cartes !`, 'action', 3000);
-                        this.tableUI.playAnimation('flip-three-card', message);
+                        this.tableUI.showActionBanner('🔄', `${sourcePlayer?.name} force ${targetPlayer?.name} à piocher 3 cartes !`, 'flip-three', 3000);
                     }
                 }
                 break;

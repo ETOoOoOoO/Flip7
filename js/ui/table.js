@@ -61,6 +61,11 @@ export class TableUI {
         this.btnResetGame = document.getElementById('btn-reset-game');
         this.adminPlayersList = document.getElementById('admin-players-list');
         this.btnCloseAdmin = document.getElementById('btn-close-admin');
+
+        // Action Banner
+        this.actionBanner = document.getElementById('action-banner');
+        this.bannerIcon = this.actionBanner?.querySelector('.banner-icon');
+        this.bannerText = this.actionBanner?.querySelector('.banner-text');
     }
 
     bindEvents() {
@@ -640,5 +645,77 @@ export class TableUI {
 
         this.modalRoundEnd?.classList.add('hidden');
         this.modalGameEnd.classList.remove('hidden');
+    }
+
+    /**
+     * Affiche un bandeau d'action animé
+     * @param {string} icon - Emoji/icône à afficher
+     * @param {string} text - Texte du message
+     * @param {string} type - Type: 'stop', 'flip-three', 'bust', 'flip7'
+     * @param {number} duration - Durée d'affichage en ms (défaut: 3000)
+     */
+    showActionBanner(icon, text, type = 'stop', duration = 3000) {
+        if (!this.actionBanner) return;
+
+        // Clear previous timeout
+        if (this.bannerTimeout) {
+            clearTimeout(this.bannerTimeout);
+        }
+
+        // Set content
+        if (this.bannerIcon) this.bannerIcon.textContent = icon;
+        if (this.bannerText) this.bannerText.textContent = text;
+
+        // Reset classes
+        this.actionBanner.className = 'action-banner';
+        this.actionBanner.classList.add(type);
+
+        // Force reflow to restart animation
+        void this.actionBanner.offsetWidth;
+
+        // Show
+        this.actionBanner.classList.add('show');
+
+        // Hide after duration
+        this.bannerTimeout = setTimeout(() => {
+            this.actionBanner.classList.remove('show');
+            this.actionBanner.classList.add('hide');
+
+            // Clean up after hide animation
+            setTimeout(() => {
+                this.actionBanner.classList.remove('hide');
+            }, 500);
+        }, duration);
+    }
+
+    /**
+     * Affiche un message de jeu (wrapper pour compatibilité)
+     */
+    showMessage(text, type = 'info', duration = 2000) {
+        // Map type to banner type
+        const typeMap = {
+            'bust': 'bust',
+            'flip7': 'flip7',
+            'action': 'stop',
+            'info': 'stop'
+        };
+
+        // Get icon based on type
+        const iconMap = {
+            'bust': '💥',
+            'flip7': '🎉',
+            'action': '🎴',
+            'info': 'ℹ️'
+        };
+
+        this.showActionBanner(iconMap[type] || '🎴', text, typeMap[type] || 'stop', duration);
+    }
+
+    /**
+     * Joue une animation (placeholder pour compatibilité)
+     */
+    playAnimation(type, data) {
+        console.log('Playing animation:', type, data);
+        // Animation logic can be extended here
     }
 }

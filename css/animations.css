@@ -205,3 +205,114 @@
 .winner-celebrate {
     animation: winner-celebrate 0.6s ease forwards;
 }
+
+/* ==========================================
+   Action Banner Animation
+   ========================================== */
+
+@keyframes banner-slide-in {
+    0% {
+        transform: translateY(-100%) scale(0.8);
+        opacity: 0;
+    }
+
+    20% {
+        transform: translateY(10%) scale(1.05);
+        opacity: 1;
+    }
+
+    40% {
+        transform: translateY(-5%) scale(1);
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes banner-slide-out {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100%) scale(0.8);
+        opacity: 0;
+    }
+}
+
+@keyframes banner-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(255, 255, 255, 0.5), 0 10px 60px rgba(0, 0, 0, 0.6);
+    }
+}
+
+.action-banner {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+    z-index: 10000;
+    padding: 1.5rem 3rem;
+    border-radius: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: white;
+    opacity: 0;
+    pointer-events: none;
+    min-width: 300px;
+    max-width: 80vw;
+}
+
+.action-banner.show {
+    animation: banner-slide-in 0.6s ease forwards, banner-glow 1.5s ease-in-out infinite;
+}
+
+.action-banner.hide {
+    animation: banner-slide-out 0.4s ease forwards;
+}
+
+/* Stop Banner */
+.action-banner.stop {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    border: 3px solid #fecaca;
+}
+
+/* Flip Three Banner */
+.action-banner.flip-three {
+    background: linear-gradient(135deg, #f97316 0%, #c2410c 100%);
+    border: 3px solid #fed7aa;
+}
+
+/* Bust Banner */
+.action-banner.bust {
+    background: linear-gradient(135deg, #6b7280 0%, #374151 100%);
+    border: 3px solid #d1d5db;
+}
+
+/* Flip7 Banner */
+.action-banner.flip7 {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    border: 3px solid #ddd6fe;
+}
+
+.action-banner .banner-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.action-banner .banner-text {
+    display: block;
+    font-size: 1.25rem;
+    opacity: 0.9;
+}
