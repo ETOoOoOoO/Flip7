@@ -16,7 +16,7 @@ export const GamePhase = {
 };
 
 export class GameHost {
-    constructor(onStateChange, onError) {
+    constructor(onStateChange, onError, options = {}) {
         this.peer = null;
         this.roomCode = null;
         this.connections = new Map(); // peerId -> connection
@@ -29,6 +29,8 @@ export class GameHost {
         this.targetScore = DEFAULT_TARGET_SCORE;
         this.onStateChange = onStateChange;
         this.onError = onError;
+        this.onImmediateAction = options.onImmediateAction;
+        this.onAnimation = options.onAnimation;
     }
 
     /**
@@ -349,6 +351,14 @@ export class GameHost {
             }
         }
 
+        // If local player drew an immediate action card, trigger the modal
+        if (result.actionCard && peerId === this.localPlayer.id) {
+            const card = this.round.lastCardDealt;
+            if (card && (card.subType === 'stop' || card.subType === 'flip-three')) {
+                this.onImmediateAction?.(card);
+            }
+        }
+
         if (result.roundEnded) {
             this.endRound();
         } else if (!result.canUseSecondChance) {
@@ -454,8 +464,18 @@ export class GameHost {
 
         this.broadcast(createMessage(MessageType.ACTION_PLAYED, result));
 
+        // After action, check if current player can still play
+        const currentPlayer = this.round.getCurrentPlayer();
+        if (currentPlayer && currentPlayer.status !== PlayerStatus.ACTIVE && currentPlayer.status !== 'active') {
+            this.round.advanceToNextPlayer();
+        }
+
         if (result.roundEnded) {
             this.endRound();
+        } else if (Rules.isRoundOver(this.players)) {
+            this.endRound();
+        } else {
+            this.broadcastTurnChange();
         }
 
         this.notifyStateChange();

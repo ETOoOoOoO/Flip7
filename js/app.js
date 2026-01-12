@@ -112,7 +112,11 @@ class Flip7App {
         try {
             this.host = new GameHost(
                 (state) => this.onStateChange(state),
-                (error) => this.showToast(error, 'error')
+                (error) => this.showToast(error, 'error'),
+                {
+                    onImmediateAction: (card) => this.tableUI?.showTargetModalForAction(card),
+                    onAnimation: (type, data) => this.tableUI?.playAnimation(type, data)
+                }
             );
 
             const roomCode = await this.host.init(playerName, playerAvatar);
