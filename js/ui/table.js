@@ -293,9 +293,9 @@ export class TableUI {
         if (pendingSecondChance) {
             // Affiche les boutons Second Chance
             this.actionButtons.innerHTML = `
-                < button id = "btn-use-sc" class="btn btn-action" style = "background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);" >
+                <button id="btn-use-sc" class="btn btn-action" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);">
                     🍀 Utiliser Second Chance
-                </button >
+                </button>
                 <button id="btn-decline-sc" class="btn btn-action btn-stay">
                     ❌ Refuser (Bust)
                 </button>
@@ -388,10 +388,10 @@ export class TableUI {
         console.log('Targetable players for', actionCard.subType, ':', targetablePlayers.map(p => p.name));
 
         this.targetPlayers.innerHTML = targetablePlayers.map(player => `
-                < button class="target-player-btn" data - player - id="${player.id}" >
+                <button class="target-player-btn" data-player-id="${player.id}">
                 <span class="target-avatar">${player.avatar}</span>
                 <span class="target-name">${player.name}${player.id === localPlayerId ? ' (Toi)' : ''}</span>
-            </button >
+            </button>
                 `).join('');
 
         // Ajoute les listeners
@@ -436,7 +436,7 @@ export class TableUI {
         if (!this.adminPlayersList || !this.currentPlayers) return;
 
         this.adminPlayersList.innerHTML = this.currentPlayers.map(player => `
-                < li class="admin-player-item" >
+                <li class="admin-player-item">
                     <div class="admin-player-info">
                         <span class="player-avatar">${player.avatar}</span>
                         <span class="player-name">${player.name} ${player.id === this.currentLocalPlayerId ? '(Toi)' : ''}</span>
@@ -446,7 +446,7 @@ export class TableUI {
                 `<button class="btn btn-kick-admin" data-id="${player.id}">EXPULSER</button>` :
                 '<span class="text-sm text-muted">Hôte</span>'
             }
-            </li >
+            </li>
                 `).join('');
 
         // Listeners for kick buttons
@@ -487,7 +487,8 @@ export class TableUI {
                 // Assuming we can find by some data attribute if added, or traversing
                 // For now, let's try to find element with data-player-id if we added it, 
                 // otherwise we rely on the order stored in this.seatMap (if existed) or re-query
-                const seat = document.querySelector(`.player - seat[data - player - id="${playerId}"]`);
+                // otherwise we rely on the order stored in this.seatMap (if existed) or re-query
+                const seat = document.querySelector(`.player-seat[data-player-id="${playerId}"]`);
                 return seat?.querySelector('.player-seat-avatar');
             }
         };
