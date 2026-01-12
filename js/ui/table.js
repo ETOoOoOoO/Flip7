@@ -198,6 +198,9 @@ export class TableUI {
             if (player.status === PlayerStatus.BUSTED || player.status === 'busted') {
                 classes.push('is-busted');
             }
+            if (player.status === PlayerStatus.FROZEN || player.status === 'frozen') {
+                classes.push('is-frozen');
+            }
 
             const cards = player.cards || [];
             const cardsHtml = cards.map(card => {
@@ -307,9 +310,9 @@ export class TableUI {
             const stayDisabled = !isMyTurn || !canPlay || !hasCards;
 
             this.actionButtons.innerHTML = `
-                < button id = "btn-hit" class="btn btn-action btn-hit" ${hitDisabled ? 'disabled' : ''}>
+                <button id="btn-hit" class="btn btn-action btn-hit" ${hitDisabled ? 'disabled' : ''}>
                     🎴 Piocher
-                </button >
+                </button>
                 <button id="btn-stay" class="btn btn-action btn-stay" ${stayDisabled ? 'disabled' : ''}>
                     ✋ Rester
                 </button>

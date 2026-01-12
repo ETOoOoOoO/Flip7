@@ -242,7 +242,7 @@ export class Round {
         // Applique l'effet
         switch (actionType) {
             case ActionType.FREEZE:
-                target.status = PlayerStatus.STAYED;
+                target.status = PlayerStatus.FROZEN;
                 result.effects.push({ type: 'freeze', targetId });
                 break;
 
@@ -290,10 +290,29 @@ export class Round {
      * Passe au joueur suivant
      */
     advanceToNextPlayer() {
-        const nextIndex = Rules.getNextActivePlayer(this.players, this.currentPlayerIndex);
-        if (nextIndex !== -1) {
-            this.currentPlayerIndex = nextIndex;
-        }
+        let attempts = 0;
+        let found = false;
+        let index = this.currentPlayerIndex;
+
+        // Cherche le prochain joueur actif
+        do {
+            index = (index + 1) % this.players.length;
+            const player = this.players[index];
+
+            if (player.status === PlayerStatus.FROZEN) {
+                // Le joueur saute ce tour mais redevient actif pour le suivant
+                player.status = PlayerStatus.ACTIVE;
+                // On continue la boucle pour trouver le suivant
+            } else if (player.status === PlayerStatus.ACTIVE || player.status === 'active') {
+                this.currentPlayerIndex = index;
+                found = true;
+            }
+
+            attempts++;
+        } while (!found && attempts <= this.players.length);
+
+        // Si on n'a pas trouvé de joueur actif (tout le monde stay/bust), round fini
+        // Rules.isRoundOver gère ça
     }
 
     /**

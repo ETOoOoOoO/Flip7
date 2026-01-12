@@ -276,7 +276,7 @@ export class GameClient {
             const target = this.players.find(p => p.id === effect.targetId);
             if (target) {
                 if (effect.type === 'freeze') {
-                    target.status = 'stayed';
+                    target.status = 'frozen';
                 } else if (effect.type === 'flip-three-card' && effect.card) {
                     target.addCard(Card.deserialize(effect.card));
                 } else if (effect.type === 'flip-three-bust') {

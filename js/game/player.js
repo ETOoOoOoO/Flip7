@@ -8,7 +8,8 @@ export const PlayerStatus = {
     WAITING: 'waiting',
     ACTIVE: 'active',
     STAYED: 'stayed',
-    BUSTED: 'busted'
+    BUSTED: 'busted',
+    FROZEN: 'frozen'
 };
 
 export class Player {
