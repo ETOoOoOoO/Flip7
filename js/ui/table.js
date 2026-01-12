@@ -167,13 +167,9 @@ export class TableUI {
                 const cardObj = card.serialize ? card : Card.deserialize(cardData);
                 const cardEl = createCardElement(cardObj, { large: true });
 
-                // Si c'est une carte action utilisable et qu'on peut jouer
+                // Cartes action ne sont plus cliquables (automatiques)
                 if (cardObj.isAction() && cardObj.subType !== ActionType.SECOND_CHANCE) {
-                    cardEl.classList.add('clickable');
-                    cardEl.addEventListener('click', () => {
-                        // Use stored players and localPlayerId
-                        this.showTargetModal(cardObj, this.currentPlayers, this.currentLocalPlayerId);
-                    });
+                    // Pas de listener, usage immédiat à la pioche
                 }
 
                 this.localCards.appendChild(cardEl);
@@ -217,7 +213,7 @@ export class TableUI {
             }).join('');
 
             return `
-                <div class="${classes.join(' ')}" style="top: ${pos.top}%; left: ${pos.left}%; transform: translate(-50%, -50%);">
+                <div class="${classes.join(' ')}" data-player-id="${player.id}" style="top: ${pos.top}%; left: ${pos.left}%; transform: translate(-50%, -50%);">
                     <div class="player-seat-info">
                         <span class="player-seat-avatar">${player.avatar}</span>
                         <span class="player-seat-name">${player.name}</span>
@@ -294,9 +290,9 @@ export class TableUI {
         if (pendingSecondChance) {
             // Affiche les boutons Second Chance
             this.actionButtons.innerHTML = `
-                <button id="btn-use-sc" class="btn btn-action" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);">
+                < button id = "btn-use-sc" class="btn btn-action" style = "background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);" >
                     🍀 Utiliser Second Chance
-                </button>
+                </button >
                 <button id="btn-decline-sc" class="btn btn-action btn-stay">
                     ❌ Refuser (Bust)
                 </button>
@@ -311,9 +307,9 @@ export class TableUI {
             const stayDisabled = !isMyTurn || !canPlay || !hasCards;
 
             this.actionButtons.innerHTML = `
-                <button id="btn-hit" class="btn btn-action btn-hit" ${hitDisabled ? 'disabled' : ''}>
+                < button id = "btn-hit" class="btn btn-action btn-hit" ${hitDisabled ? 'disabled' : ''}>
                     🎴 Piocher
-                </button>
+                </button >
                 <button id="btn-stay" class="btn btn-action btn-stay" ${stayDisabled ? 'disabled' : ''}>
                     ✋ Rester
                 </button>
@@ -334,7 +330,7 @@ export class TableUI {
         this.gameMessageText.textContent = text;
         this.gameMessage.className = 'game-message';
         if (type) {
-            this.gameMessage.classList.add(`message-${type}`);
+            this.gameMessage.classList.add(`message - ${type} `);
         }
         this.gameMessage.classList.remove('hidden');
 
@@ -380,11 +376,11 @@ export class TableUI {
         console.log('Targetable players for', actionCard.subType, ':', targetablePlayers.map(p => p.name));
 
         this.targetPlayers.innerHTML = targetablePlayers.map(player => `
-            <button class="target-player-btn" data-player-id="${player.id}">
+                < button class="target-player-btn" data - player - id="${player.id}" >
                 <span class="target-avatar">${player.avatar}</span>
                 <span class="target-name">${player.name}${player.id === localPlayerId ? ' (Toi)' : ''}</span>
-            </button>
-        `).join('');
+            </button >
+                `).join('');
 
         // Ajoute les listeners
         this.targetPlayers.querySelectorAll('.target-player-btn').forEach(btn => {
@@ -428,29 +424,109 @@ export class TableUI {
         if (!this.adminPlayersList || !this.currentPlayers) return;
 
         this.adminPlayersList.innerHTML = this.currentPlayers.map(player => `
-            <li class="admin-player-item">
-                <div class="admin-player-info">
-                    <span class="player-avatar">${player.avatar}</span>
-                    <span class="player-name">${player.name} ${player.id === this.currentLocalPlayerId ? '(Toi)' : ''}</span>
-                    <span class="player-score">${player.score} pts</span>
-                </div>
+                < li class="admin-player-item" >
+                    <div class="admin-player-info">
+                        <span class="player-avatar">${player.avatar}</span>
+                        <span class="player-name">${player.name} ${player.id === this.currentLocalPlayerId ? '(Toi)' : ''}</span>
+                        <span class="player-score">${player.score} pts</span>
+                    </div>
                 ${player.id !== this.currentLocalPlayerId ?
                 `<button class="btn btn-kick-admin" data-id="${player.id}">EXPULSER</button>` :
-                '<span class="text-sm text-muted">Hôte</span>'}
-            </li>
-        `).join('');
+                '<span class="text-sm text-muted">Hôte</span>'
+            }
+            </li >
+                `).join('');
 
         // Listeners for kick buttons
         this.adminPlayersList.querySelectorAll('.btn-kick-admin').forEach(btn => {
             btn.addEventListener('click', () => {
                 const playerId = btn.dataset.id;
                 const player = this.currentPlayers.find(p => p.id === playerId);
-                if (confirm(`Voulez-vous vraiment exclure ${player?.name} ?`)) {
+                if (confirm(`Voulez - vous vraiment exclure ${player?.name} ?`)) {
                     this.onKick?.(playerId);
                     // Pas besoin de refresh immédiat, l'update du state le fera
                 }
             });
         });
+    }
+
+    /**
+     * Affiche le modal de cible pour une action immédiate
+     */
+    showTargetModalForAction(card) {
+        if (this.currentPlayers && this.currentLocalPlayerId) {
+            this.showTargetModal(card, this.currentPlayers, this.currentLocalPlayerId);
+        }
+    }
+
+    /**
+     * Joue une animation visuelle
+     */
+    playAnimation(type, data) {
+        console.log(`Playing animation: ${type} `, data);
+
+        // Find target element (avatar)
+        const getTargetElement = (playerId) => {
+            if (playerId === this.currentLocalPlayerId) {
+                return document.querySelector('.local-player-info .local-avatar');
+            } else {
+                // Find seat index
+                // Note: players-around logic might rely on index or data attribute
+                // Assuming we can find by some data attribute if added, or traversing
+                // For now, let's try to find element with data-player-id if we added it, 
+                // otherwise we rely on the order stored in this.seatMap (if existed) or re-query
+                const seat = document.querySelector(`.player - seat[data - player - id="${playerId}"]`);
+                return seat?.querySelector('.player-seat-avatar');
+            }
+        };
+
+        if (type === 'freeze') {
+            const targetEl = getTargetElement(data.effects[0].targetId);
+            if (targetEl) {
+                const parent = targetEl.closest('.player-seat') || targetEl.closest('.local-player-info');
+                parent?.classList.add('frozen');
+
+                // Add temporary class for effect overlay
+                const effectOverlay = document.createElement('div');
+                effectOverlay.className = 'frozen-effect';
+                targetEl.appendChild(effectOverlay);
+
+                setTimeout(() => {
+                    parent?.classList.remove('frozen');
+                    effectOverlay.remove();
+                }, 3000);
+            }
+        } else if (type === 'flip-three-card' || type === 'flip-three-bust') {
+            // Effect on target
+            const targetId = data.effects[0].targetId;
+            const targetEl = getTargetElement(targetId);
+
+            if (targetEl) {
+                targetEl.classList.add('flip3-target');
+                setTimeout(() => targetEl.classList.remove('flip3-target'), 1000);
+
+                // Flying cards animation
+                // Source is deck or hitting player? Usually deck for flip3
+                const deck = document.getElementById('deck');
+                const rectStart = deck.getBoundingClientRect();
+                const rectEnd = targetEl.getBoundingClientRect();
+
+                for (let i = 0; i < 3; i++) {
+                    const card = document.createElement('div');
+                    card.className = 'flying-card';
+                    card.style.left = `${rectStart.left} px`;
+                    card.style.top = `${rectStart.top} px`;
+                    document.body.appendChild(card);
+
+                    setTimeout(() => {
+                        card.style.transform = `translate(${rectEnd.left - rectStart.left + (Math.random() * 20 - 10)}px, ${rectEnd.top - rectStart.top + (Math.random() * 20 - 10)}px) rotate(${Math.random() * 360}deg)`;
+                        card.style.opacity = '0';
+                    }, 50 + i * 150);
+
+                    setTimeout(() => card.remove(), 1000);
+                }
+            }
+        }
     }
 
     /**
@@ -462,13 +538,13 @@ export class TableUI {
         const sortedPlayers = [...players].sort((a, b) => b.roundScore - a.roundScore);
 
         this.roundScores.innerHTML = sortedPlayers.map((player, index) => `
-            <div class="round-score-item ${index === 0 && player.roundScore > 0 ? 'is-winner' : ''}">
+                < div class="round-score-item ${index === 0 && player.roundScore > 0 ? 'is-winner' : ''}" >
                 <span class="round-score-avatar">${player.avatar}</span>
                 <span class="round-score-name">${player.name}</span>
                 <span class="round-score-points">+<span>${player.roundScore}</span> pts</span>
                 <span class="round-score-total">${player.score} pts</span>
-            </div>
-        `).join('');
+            </div >
+                `).join('');
 
         if (isHost) {
             this.btnNextRound?.classList.remove('hidden');
@@ -498,19 +574,19 @@ export class TableUI {
         const winner = sortedPlayers[0];
 
         this.winnerDisplay.innerHTML = `
-            <div class="winner-avatar winner-celebrate">${winner.avatar}</div>
+                < div class="winner-avatar winner-celebrate" > ${winner.avatar}</div >
             <div class="winner-name">${winner.name}</div>
             <div class="winner-score">${winner.score} points</div>
-        `;
+            `;
 
         this.finalScores.innerHTML = sortedPlayers.map((player, index) => `
-            <div class="final-score-item">
+                < div class="final-score-item" >
                 <span class="final-score-rank">#${index + 1}</span>
                 <span>${player.avatar}</span>
                 <span class="final-score-name">${player.name}</span>
                 <span class="final-score-points">${player.score} pts</span>
-            </div>
-        `).join('');
+            </div >
+                `).join('');
 
         this.modalRoundEnd?.classList.add('hidden');
         this.modalGameEnd.classList.remove('hidden');

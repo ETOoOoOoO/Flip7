@@ -8,7 +8,7 @@ import { MessageType, createMessage } from './messages.js';
 import { GamePhase } from './host.js';
 
 export class GameClient {
-    constructor(onStateChange, onError, onMessage) {
+    constructor(onStateChange, onError, onMessage, options = {}) {
         this.peer = null;
         this.connection = null;
         this.players = [];
@@ -22,6 +22,8 @@ export class GameClient {
         this.onStateChange = onStateChange;
         this.onError = onError;
         this.onMessage = onMessage;
+        this.onImmediateAction = options.onImmediateAction;
+        this.onAnimation = options.onAnimation;
         this.pendingSecondChance = false;
     }
 
@@ -231,10 +233,20 @@ export class GameClient {
     }
 
     handlePlayerHit(message) {
+        const card = Card.deserialize(message.card);
         const player = this.players.find(p => p.id === message.playerId);
+
         if (player) {
-            player.addCard(Card.deserialize(message.card));
+            player.addCard(card);
         }
+
+        // Action immédiate pour le joueur local
+        if (message.playerId === this.localPlayer?.id && card.type === 'action') {
+            if (card.subType === 'freeze' || card.subType === 'flip-three') {
+                this.onImmediateAction?.(card);
+            }
+        }
+
         this.notifyStateChange();
     }
 
@@ -256,6 +268,9 @@ export class GameClient {
     }
 
     handleActionPlayed(message) {
+        // Animation
+        this.onAnimation?.(message.actionType, message);
+
         // Met à jour les joueurs selon les effets
         for (const effect of message.effects || []) {
             const target = this.players.find(p => p.id === effect.targetId);
