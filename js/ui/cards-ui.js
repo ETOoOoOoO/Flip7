@@ -48,12 +48,14 @@ export function createCardElement(card, options = {}) {
         const icons = {
             [ActionType.FREEZE]: '❄️',
             [ActionType.FLIP_THREE]: '🔄',
-            [ActionType.SECOND_CHANCE]: '🍀'
+            [ActionType.SECOND_CHANCE]: '🍀',
+            [ActionType.STOP]: '🔒'
         };
         const labels = {
             [ActionType.FREEZE]: 'Freeze',
             [ActionType.FLIP_THREE]: 'Flip 3',
-            [ActionType.SECOND_CHANCE]: '2nd Chance'
+            [ActionType.SECOND_CHANCE]: '2nd Chance',
+            [ActionType.STOP]: 'STOP'
         };
         frontEl.innerHTML = `
             <span class="card-icon">${icons[card.subType] || '?'}</span>

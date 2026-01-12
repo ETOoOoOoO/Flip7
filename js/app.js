@@ -253,7 +253,7 @@ class Flip7App {
                     const targetPlayer = this.currentState?.players?.find(p => p.id === message.targetId);
 
                     if (effect.type === 'stop' && sourcePlayer && targetPlayer) {
-                        this.tableUI.showActionBanner('🛑', `${sourcePlayer.name} a STOPPÉ ${targetPlayer.name} !`, 'stop', 3000);
+                        this.tableUI.showActionBanner('🔒', `${sourcePlayer.name} a STOPPÉ ${targetPlayer.name} !`, 'stop', 3000);
                     } else if (effect.type === 'flip-three-card' || effect.type === 'flip-three-bust') {
                         this.tableUI.showActionBanner('🔄', `${sourcePlayer?.name} force ${targetPlayer?.name} à piocher 3 cartes !`, 'flip-three', 3000);
                     }

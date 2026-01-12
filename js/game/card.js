@@ -65,7 +65,7 @@ export class Card {
                 case ActionType.FREEZE: return '❄️';
                 case ActionType.FLIP_THREE: return '🔄';
                 case ActionType.SECOND_CHANCE: return '🍀';
-                case ActionType.STOP: return '🛑';
+                case ActionType.STOP: return '🔒';
                 default: return '?';
             }
         }

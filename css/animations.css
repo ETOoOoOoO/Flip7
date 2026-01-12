@@ -259,7 +259,9 @@
     position: fixed;
     top: 35%;
     left: 50%;
-    transform: translateX(-50%) translateY(-100%);
+    margin-left: -150px;
+    /* Half of min-width for centering */
+    transform: translateY(-100%);
     z-index: 10000;
     padding: 1.5rem 3rem;
     border-radius: 1rem;
