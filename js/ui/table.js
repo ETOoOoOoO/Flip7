@@ -53,6 +53,13 @@ export class TableUI {
         this.modalTarget = document.getElementById('modal-target');
         this.targetPlayers = document.getElementById('target-players');
         this.btnCancelTarget = document.getElementById('btn-cancel-target');
+
+        // Admin Elements
+        this.btnAdmin = document.getElementById('btn-admin');
+        this.modalAdmin = document.getElementById('modal-admin');
+        this.btnResetGame = document.getElementById('btn-reset-game');
+        this.adminPlayersList = document.getElementById('admin-players-list');
+        this.btnCloseAdmin = document.getElementById('btn-close-admin');
     }
 
     bindEvents() {
@@ -61,6 +68,16 @@ export class TableUI {
         this.btnNextRound?.addEventListener('click', () => this.onNextRound?.());
         this.btnBackHome?.addEventListener('click', () => this.onBackHome?.());
         this.btnCancelTarget?.addEventListener('click', () => this.hideTargetModal());
+
+        // Admin Events
+        this.btnAdmin?.addEventListener('click', () => this.showAdminModal());
+        this.btnCloseAdmin?.addEventListener('click', () => this.hideAdminModal());
+        this.btnResetGame?.addEventListener('click', () => {
+            if (confirm('⚠️ Êtes-vous sûr de vouloir réinitialiser la partie ? Tous les scores seront perdus.')) {
+                this.onResetGame?.();
+                this.hideAdminModal();
+            }
+        });
 
         // Cliquer sur le deck pour piocher
         const deck = document.getElementById('deck');
@@ -86,6 +103,16 @@ export class TableUI {
         // Store state for action card handlers
         this.currentPlayers = players;
         this.currentLocalPlayerId = localPlayer?.id;
+        this.isHost = isHost; // Store host status
+
+        // Show/Hide Admin Button
+        if (this.btnAdmin) {
+            if (isHost) {
+                this.btnAdmin.classList.remove('hidden');
+            } else {
+                this.btnAdmin.classList.add('hidden');
+            }
+        }
 
         // Header info
         if (this.roundNumberEl) this.roundNumberEl.textContent = roundNumber || 1;
@@ -372,11 +399,58 @@ export class TableUI {
     }
 
     /**
-     * Cache le modal de cible
+     * Cache le modal de sélection de cible
      */
     hideTargetModal() {
         this.modalTarget?.classList.add('hidden');
         this.pendingActionCard = null;
+    }
+
+    /**
+     * Affiche le modal d'administration
+     */
+    showAdminModal() {
+        this.updateAdminPlayersList();
+        this.modalAdmin?.classList.remove('hidden');
+    }
+
+    /**
+     * Cache le modal d'administration
+     */
+    hideAdminModal() {
+        this.modalAdmin?.classList.add('hidden');
+    }
+
+    /**
+     * Met à jour la liste des joueurs dans le panneau admin
+     */
+    updateAdminPlayersList() {
+        if (!this.adminPlayersList || !this.currentPlayers) return;
+
+        this.adminPlayersList.innerHTML = this.currentPlayers.map(player => `
+            <li class="admin-player-item">
+                <div class="admin-player-info">
+                    <span class="player-avatar">${player.avatar}</span>
+                    <span class="player-name">${player.name} ${player.id === this.currentLocalPlayerId ? '(Toi)' : ''}</span>
+                    <span class="player-score">${player.score} pts</span>
+                </div>
+                ${player.id !== this.currentLocalPlayerId ?
+                `<button class="btn btn-kick-admin" data-id="${player.id}">EXPULSER</button>` :
+                '<span class="text-sm text-muted">Hôte</span>'}
+            </li>
+        `).join('');
+
+        // Listeners for kick buttons
+        this.adminPlayersList.querySelectorAll('.btn-kick-admin').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const playerId = btn.dataset.id;
+                const player = this.currentPlayers.find(p => p.id === playerId);
+                if (confirm(`Voulez-vous vraiment exclure ${player?.name} ?`)) {
+                    this.onKick?.(playerId);
+                    // Pas besoin de refresh immédiat, l'update du state le fera
+                }
+            });
+        });
     }
 
     /**

@@ -590,6 +590,96 @@ export class GameHost {
     }
 
     /**
+     * Exclut un joueur de la partie
+     */
+    kickPlayer(playerId) {
+        // Ne peut pas se kick soi-même
+        if (playerId === this.localPlayer?.id) return;
+
+        const playerIndex = this.players.findIndex(p => p.id === playerId);
+        if (playerIndex === -1) return;
+
+        const player = this.players[playerIndex];
+        const conn = this.connections.get(playerId);
+
+        console.log(`Kicking player ${player.name} (${playerId})`);
+
+        // Envoie message KICKED
+        if (conn) {
+            try {
+                conn.send(createMessage(MessageType.KICKED, { reason: 'Exclu par l\'hôte' }));
+
+                // Ferme la connexion après un court délai pour laisser le temps au message de partir
+                setTimeout(() => {
+                    try {
+                        conn.close();
+                    } catch (e) {
+                        console.error('Error closing connection:', e);
+                    }
+                }, 100);
+            } catch (e) {
+                console.error('Error sending kick message:', e);
+            }
+            this.connections.delete(playerId);
+        }
+
+        // Retire le joueur de la liste
+        this.players.splice(playerIndex, 1);
+
+        // Si c'était le tour du joueur kické, passe au suivant
+        if (this.round && this.round.getCurrentPlayer()?.id === playerId) {
+            this.round.advanceToNextPlayer();
+        }
+
+        // Broadcast player left
+        this.broadcast(createMessage(MessageType.PLAYER_LEFT, { playerId }));
+
+        // Recalcule target score si nécessaire (basé sur nb joueurs)
+        // ... (optionnel)
+
+        this.notifyStateChange();
+    }
+
+    /**
+     * Réinitialise complètement la partie
+     */
+    resetGame() {
+        console.log('Resetting game...');
+
+        // Reset scores
+        for (const player of this.players) {
+            player.score = 0;
+            player.roundScore = 0;
+            player.cards = [];
+            player.status = 'active'; // Reset status
+            player.hasSecondChance = true; // Reset second chance
+        }
+
+        this.roundNumber = 0;
+        this.dealerIndex = 0;
+        this.gamePhase = GamePhase.PLAYING;
+
+        // Broadcast reset (via GAME_STATE ou message spécifique si besoin)
+        // On va juste startNewRound qui va envoyer GAME_STARTING/ROUND_START
+
+        this.startNewRound();
+
+        this.broadcast(createMessage(MessageType.GAME_STATE, {
+            players: this.players.map(p => p.serialize()),
+            gamePhase: this.gamePhase,
+            targetScore: this.targetScore,
+            roomCode: this.roomCode,
+            roundNumber: this.roundNumber,
+            currentPlayerId: this.round?.getCurrentPlayer()?.id,
+            deckCount: this.round?.deck?.remaining(),
+            reset: true
+        }));
+
+        this.showToast('Partie réinitialisée', 'info');
+        this.notifyStateChange();
+    }
+
+    /**
      * Nettoie les ressources
      */
     destroy() {

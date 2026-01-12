@@ -95,7 +95,9 @@ class Flip7App {
             onPlayAction: (actionType, targetId) => this.handlePlayAction(actionType, targetId),
             onNextRound: () => this.handleNextRound(),
             onLeave: () => this.leaveGame(),
-            onBackHome: () => this.backToHome()
+            onBackHome: () => this.backToHome(),
+            onKick: (playerId) => this.kickPlayer(playerId),
+            onResetGame: () => this.resetGame()
         });
     }
 
@@ -270,14 +272,24 @@ class Flip7App {
     }
 
     /**
-     * Kick un joueur (hôte)
+     * Exclut un joueur (hôte)
      */
     kickPlayer(playerId) {
         if (this.isHost && this.host) {
             this.host.kickPlayer(playerId);
-            this.showToast('Joueur exclu', 'info');
         }
     }
+
+    /**
+     * Réinitialise la partie (hôte)
+     */
+    resetGame() {
+        if (this.isHost && this.host) {
+            this.host.resetGame();
+        }
+    }
+
+
 
     /**
      * Actions de jeu

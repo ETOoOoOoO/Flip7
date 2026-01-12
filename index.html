@@ -128,6 +128,7 @@
                     <span class="round-info">Manche <span id="round-number">1</span></span>
                     <span class="target-info">Objectif : <span id="target-score">200</span> pts</span>
                 </div>
+                <button id="btn-admin" class="btn btn-icon-only hidden" title="Administration">⚙️</button>
                 <button id="btn-leave-game" class="btn btn-ghost btn-small">Quitter</button>
             </div>
 
@@ -213,6 +214,31 @@
                         <!-- Joueurs cibles injectés par JS -->
                     </div>
                     <button id="btn-cancel-target" class="btn btn-ghost">Annuler</button>
+                </div>
+            </div>
+            <!-- Modal Admin -->
+            <div id="modal-admin" class="modal hidden">
+                <div class="modal-content modal-admin">
+                    <h2>Administration</h2>
+
+                    <div class="admin-section">
+                        <h3>Gestion de la partie</h3>
+                        <button id="btn-reset-game" class="btn btn-danger full-width">
+                            ⚠️ Réinitialiser la partie
+                        </button>
+                        <p class="text-sm text-muted mt-2">Remet tous les scores à 0 et recommence la manche 1.</p>
+                    </div>
+
+                    <div class="admin-section">
+                        <h3>Joueurs</h3>
+                        <ul id="admin-players-list" class="admin-players-list">
+                            <!-- Liste des joueurs injectée par JS -->
+                        </ul>
+                    </div>
+
+                    <div class="modal-buttons">
+                        <button id="btn-close-admin" class="btn btn-primary">Fermer</button>
+                    </div>
                 </div>
             </div>
         </div>
