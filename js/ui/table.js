@@ -16,6 +16,8 @@ export class TableUI {
         this.onNextRound = options.onNextRound;
         this.onLeave = options.onLeave;
         this.onBackHome = options.onBackHome;
+        this.onKick = options.onKick;
+        this.onResetGame = options.onResetGame;
 
         this.bindElements();
         this.bindEvents();
