@@ -31,6 +31,7 @@ export class GameHost {
         this.onError = onError;
         this.onImmediateAction = options.onImmediateAction;
         this.onAnimation = options.onAnimation;
+        this.onMessage = options.onMessage;
     }
 
     /**
@@ -331,9 +332,12 @@ export class GameHost {
         }));
 
         if (result.bust) {
+            const bustMsg = { type: 'PLAYER_BUSTED', playerId: peerId };
             this.broadcast(createMessage(MessageType.PLAYER_BUSTED, {
                 playerId: peerId
             }));
+            // Also notify the host locally
+            this.onMessage?.(bustMsg);
         }
 
         if (result.flip7) {
@@ -447,7 +451,6 @@ export class GameHost {
 
         this.notifyStateChange();
     }
-
     /**
      * Gère l'utilisation d'une carte action
      */
@@ -464,10 +467,26 @@ export class GameHost {
 
         this.broadcast(createMessage(MessageType.ACTION_PLAYED, result));
 
-        // After action, check if current player can still play
+        // Notify host locally so it sees the same messages as clients
+        const actionMsg = { type: 'ACTION_PLAYED', ...result };
+        this.onMessage?.(actionMsg);
+
+        // Trigger animation for the host (local player)
+        if (result.effects && result.effects.length > 0) {
+            const effectType = result.effects[0].type;
+            this.onAnimation?.(effectType, result);
+        }
+
+        // After action, if target was affected (STAYED/BUSTED/FROZEN), check if they were current
+        // and advance if needed
+        const targetPlayer = this.players.find(p => p.id === message.targetId);
         const currentPlayer = this.round.getCurrentPlayer();
-        if (currentPlayer && currentPlayer.status !== PlayerStatus.ACTIVE && currentPlayer.status !== 'active') {
-            this.round.advanceToNextPlayer();
+
+        if (targetPlayer && targetPlayer.id === currentPlayer?.id) {
+            // Target was current player and may no longer be able to play
+            if (targetPlayer.status !== PlayerStatus.ACTIVE && targetPlayer.status !== 'active') {
+                this.round.advanceToNextPlayer();
+            }
         }
 
         if (result.roundEnded) {

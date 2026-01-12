@@ -115,7 +115,8 @@ class Flip7App {
                 (error) => this.showToast(error, 'error'),
                 {
                     onImmediateAction: (card) => this.tableUI?.showTargetModalForAction(card),
-                    onAnimation: (type, data) => this.tableUI?.playAnimation(type, data)
+                    onAnimation: (type, data) => this.tableUI?.playAnimation(type, data),
+                    onMessage: (message) => this.onMessage(message)
                 }
             );
 
@@ -242,6 +243,22 @@ class Flip7App {
                 const flip7Player = this.currentState?.players?.find(p => p.id === message.playerId);
                 if (flip7Player) {
                     this.tableUI.showMessage(`🎉 ${flip7Player.name} a fait FLIP 7 !`, 'flip7', 3000);
+                }
+                break;
+            case 'ACTION_PLAYED':
+                // Show message and animation for action cards
+                if (message.effects && message.effects.length > 0) {
+                    const effect = message.effects[0];
+                    const sourcePlayer = this.currentState?.players?.find(p => p.id === message.playerId);
+                    const targetPlayer = this.currentState?.players?.find(p => p.id === message.targetId);
+
+                    if (effect.type === 'stop' && sourcePlayer && targetPlayer) {
+                        this.tableUI.showMessage(`🛑 ${sourcePlayer.name} a STOP ${targetPlayer.name} !`, 'action', 3000);
+                        this.tableUI.playAnimation('stop', message);
+                    } else if (effect.type === 'flip-three-card' || effect.type === 'flip-three-bust') {
+                        this.tableUI.showMessage(`🔄 ${sourcePlayer?.name} force ${targetPlayer?.name} à piocher 3 cartes !`, 'action', 3000);
+                        this.tableUI.playAnimation('flip-three-card', message);
+                    }
                 }
                 break;
         }
