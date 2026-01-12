@@ -52,6 +52,9 @@ export class Deck {
         for (let i = 0; i < 2; i++) {
             this.cards.push(new Card(CardType.ACTION, 0, ActionType.SECOND_CHANCE));
         }
+        for (let i = 0; i < 3; i++) {
+            this.cards.push(new Card(CardType.ACTION, 0, ActionType.STOP));
+        }
 
         this.shuffle();
     }

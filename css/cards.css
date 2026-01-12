@@ -537,6 +537,33 @@
     animation: spin-slow 10s linear infinite;
 }
 
+@keyframes pop-in-out {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    20% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
+
+    30% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    80% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
 /* Flip 3 Animation */
 .flip3-target {
     animation: shake-cards 0.5s ease-in-out;

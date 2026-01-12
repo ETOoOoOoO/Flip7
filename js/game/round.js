@@ -281,6 +281,11 @@ export class Round {
                     }
                 }
                 break;
+
+            case ActionType.STOP:
+                target.status = PlayerStatus.STAYED;
+                result.effects.push({ type: 'stop', targetId });
+                break;
         }
 
         return result;

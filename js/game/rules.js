@@ -140,6 +140,9 @@ export class Rules {
             case ActionType.FLIP_THREE:
                 // Peut forcer n'importe quel joueur actif à piocher 3
                 return true;
+            case ActionType.STOP:
+                // Peut stopper n'importe quel joueur actif
+                return true;
             default:
                 return false;
         }

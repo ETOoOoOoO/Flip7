@@ -357,6 +357,8 @@ export class TableUI {
                 titleEl.textContent = '❄️ Geler un joueur';
             } else if (actionCard.subType === 'flip-three') {
                 titleEl.textContent = '🔄 Forcer à piocher 3 cartes';
+            } else if (actionCard.subType === 'stop') {
+                titleEl.textContent = '🛑 Stop ! (Force à rester)';
             }
         }
 
@@ -529,6 +531,24 @@ export class TableUI {
                     setTimeout(() => card.remove(), 1000);
                 }
             }
+        } else if (type === 'stop') {
+            const targetEl = getTargetElement(data.effects[0].targetId);
+            if (targetEl) {
+                const stopSign = document.createElement('div');
+                stopSign.textContent = '🛑';
+                stopSign.style.position = 'absolute';
+                stopSign.style.inset = '0';
+                stopSign.style.display = 'flex';
+                stopSign.style.alignItems = 'center';
+                stopSign.style.justifyContent = 'center';
+                stopSign.style.fontSize = '3rem';
+                stopSign.style.zIndex = '20';
+                stopSign.style.animation = 'pop-in-out 1.5s ease-in-out forwards';
+                stopSign.style.pointerEvents = 'none';
+
+                targetEl.appendChild(stopSign);
+                setTimeout(() => stopSign.remove(), 1500);
+            }
         }
     }
 
@@ -541,12 +561,12 @@ export class TableUI {
         const sortedPlayers = [...players].sort((a, b) => b.roundScore - a.roundScore);
 
         this.roundScores.innerHTML = sortedPlayers.map((player, index) => `
-                < div class="round-score-item ${index === 0 && player.roundScore > 0 ? 'is-winner' : ''}" >
+                <div class="round-score-item ${index === 0 && player.roundScore > 0 ? 'is-winner' : ''}">
                 <span class="round-score-avatar">${player.avatar}</span>
                 <span class="round-score-name">${player.name}</span>
                 <span class="round-score-points">+<span>${player.roundScore}</span> pts</span>
                 <span class="round-score-total">${player.score} pts</span>
-            </div >
+            </div>
                 `).join('');
 
         if (isHost) {
@@ -577,18 +597,18 @@ export class TableUI {
         const winner = sortedPlayers[0];
 
         this.winnerDisplay.innerHTML = `
-                < div class="winner-avatar winner-celebrate" > ${winner.avatar}</div >
+                <div class="winner-avatar winner-celebrate">${winner.avatar}</div>
             <div class="winner-name">${winner.name}</div>
             <div class="winner-score">${winner.score} points</div>
             `;
 
         this.finalScores.innerHTML = sortedPlayers.map((player, index) => `
-                < div class="final-score-item" >
+                <div class="final-score-item">
                 <span class="final-score-rank">#${index + 1}</span>
                 <span>${player.avatar}</span>
                 <span class="final-score-name">${player.name}</span>
                 <span class="final-score-points">${player.score} pts</span>
-            </div >
+            </div>
                 `).join('');
 
         this.modalRoundEnd?.classList.add('hidden');

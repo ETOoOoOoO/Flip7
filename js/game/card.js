@@ -11,7 +11,8 @@ export const CardType = {
 export const ActionType = {
     FREEZE: 'freeze',
     FLIP_THREE: 'flip-three',
-    SECOND_CHANCE: 'second-chance'
+    SECOND_CHANCE: 'second-chance',
+    STOP: 'stop'
 };
 
 export const ModifierType = {
@@ -64,6 +65,7 @@ export class Card {
                 case ActionType.FREEZE: return '❄️';
                 case ActionType.FLIP_THREE: return '🔄';
                 case ActionType.SECOND_CHANCE: return '🍀';
+                case ActionType.STOP: return '🛑';
                 default: return '?';
             }
         }
@@ -85,6 +87,7 @@ export class Card {
                 case ActionType.FREEZE: return 'Freeze';
                 case ActionType.FLIP_THREE: return 'Flip Three';
                 case ActionType.SECOND_CHANCE: return 'Second Chance';
+                case ActionType.STOP: return 'Stop';
                 default: return 'Action';
             }
         }
