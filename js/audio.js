@@ -56,7 +56,7 @@ export class AudioManager {
     }
 
     /**
-     * Son de clic bouton
+     * Son de clic bouton (Crisp & Short)
      */
     playClick() {
         if (!this.initialized || this.isMuted) return;
@@ -68,14 +68,39 @@ export class AudioManager {
         osc.connect(gain);
         gain.connect(this.masterGain);
 
-        osc.frequency.setValueAtTime(800, t);
-        osc.frequency.exponentialRampToValueAtTime(1200, t + 0.05);
+        // Plus aigu, decay plus rapide pour effet "crisp"
+        osc.frequency.setValueAtTime(1200, t);
+        osc.frequency.exponentialRampToValueAtTime(600, t + 0.05);
 
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+        gain.gain.setValueAtTime(0.15, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
 
         osc.start(t);
         osc.stop(t + 0.05);
+    }
+
+    /**
+     * Son de survol (Hover) - Très léger
+     */
+    playHover() {
+        if (!this.initialized || this.isMuted) return;
+
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+
+        osc.frequency.setValueAtTime(1500, t);
+        osc.frequency.linearRampToValueAtTime(2000, t + 0.03);
+
+        gain.gain.setValueAtTime(0.02, t); // Très faible
+        gain.gain.linearRampToValueAtTime(0.001, t + 0.03);
+
+        osc.start(t);
+        osc.stop(t + 0.03);
     }
 
     /**

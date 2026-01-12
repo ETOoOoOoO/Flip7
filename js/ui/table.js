@@ -58,6 +58,11 @@ export class TableUI {
         this.targetPlayers = document.getElementById('target-players');
         this.btnCancelTarget = document.getElementById('btn-cancel-target');
 
+        this.btnCancelTarget = document.getElementById('btn-cancel-target');
+
+        // Mute Button
+        this.btnSound = document.getElementById('btn-sound');
+
         // Admin Elements
         this.btnAdmin = document.getElementById('btn-admin');
         this.modalAdmin = document.getElementById('modal-admin');
@@ -84,7 +89,24 @@ export class TableUI {
         });
         this.btnNextRound?.addEventListener('click', () => this.onNextRound?.());
         this.btnBackHome?.addEventListener('click', () => this.onBackHome?.());
+        this.btnBackHome?.addEventListener('click', () => this.onBackHome?.());
         this.btnCancelTarget?.addEventListener('click', () => this.hideTargetModal());
+
+        // Sound Toggle
+        this.btnSound?.addEventListener('click', () => {
+            // Force init/resume if needed
+            if (this.audioManager?.ctx?.state === 'suspended') {
+                this.audioManager.ctx.resume();
+            } else if (!this.audioManager?.initialized) {
+                this.audioManager?.init();
+            }
+
+            const isMuted = this.audioManager?.toggleMute();
+            if (this.btnSound) {
+                this.btnSound.textContent = isMuted ? '🔇' : '🔊';
+                this.btnSound.title = isMuted ? 'Son Inactif' : 'Son Actif';
+            }
+        });
 
         // Admin Events
         this.btnAdmin?.addEventListener('click', () => this.showAdminModal());
@@ -95,6 +117,21 @@ export class TableUI {
                 this.hideAdminModal();
             }
         });
+
+        // Hover Sounds
+        const addHoverSound = (el) => {
+            el?.addEventListener('mouseenter', () => this.audioManager?.playHover());
+        };
+
+        addHoverSound(this.btnHit);
+        addHoverSound(this.btnStay);
+        addHoverSound(this.btnNextRound);
+        addHoverSound(this.btnBackHome);
+        addHoverSound(this.btnCancelTarget);
+        addHoverSound(this.btnSound);
+        addHoverSound(this.btnAdmin);
+        addHoverSound(this.btnPlayAgain);
+        addHoverSound(this.btnResetGame);
 
         this.btnPlayAgain?.addEventListener('click', () => {
             if (confirm('Rejouer une partie avec les mêmes joueurs ?')) {
@@ -300,7 +337,8 @@ export class TableUI {
             const icons = {
                 'freeze': '❄️',
                 'flip-three': '🔄',
-                'second-chance': '🍀'
+                'second-chance': '🍀',
+                'stop': '🔒'
             };
             return icons[cardData.subType] || '?';
         }

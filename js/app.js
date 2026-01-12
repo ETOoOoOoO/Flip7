@@ -238,6 +238,13 @@ class Flip7App {
             case 'PLAYER_LEFT':
                 this.showToast(`${message.playerName} a quitté`, 'info');
                 break;
+            case 'PLAYER_STAYED':
+                this.handlePlayerStayed(message);
+                const stayedPlayer = this.currentState?.players?.find(p => p.id === message.playerId);
+                if (stayedPlayer) {
+                    this.tableUI.showActionBanner('✋', `${stayedPlayer.name} reste`, 'info', 2000);
+                }
+                break;
             case 'PLAYER_BUSTED':
                 const bustedPlayer = this.currentState?.players?.find(p => p.id === message.playerId);
                 if (bustedPlayer) {
@@ -259,8 +266,10 @@ class Flip7App {
 
                     if (effect.type === 'stop' && sourcePlayer && targetPlayer) {
                         this.tableUI.showActionBanner('🔒', `${sourcePlayer.name} a STOPPÉ ${targetPlayer.name} !`, 'stop', 3000);
-                    } else if (effect.type === 'flip-three-card' || effect.type === 'flip-three-bust') {
-                        this.tableUI.showActionBanner('🔄', `${sourcePlayer?.name} force ${targetPlayer?.name} à piocher 3 cartes !`, 'flip-three', 3000);
+                    } else if ((effect.type === 'flip-three-card' || effect.type === 'flip-three-bust') && sourcePlayer && targetPlayer) {
+                        this.tableUI.showActionBanner('🔄', `${sourcePlayer.name} force ${targetPlayer.name} à piocher 3 cartes !`, 'flip-three', 3000);
+                    } else if (effect.type === 'second-chance' && sourcePlayer) {
+                        this.tableUI.showActionBanner('🍀', `${sourcePlayer.name} utilise une Seconde Chance !`, 'second-chance', 3000);
                     }
                 }
                 break;

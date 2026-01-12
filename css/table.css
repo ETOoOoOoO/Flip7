@@ -26,6 +26,12 @@
     z-index: 10;
 }
 
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 .game-info {
     display: flex;
     gap: 2rem;

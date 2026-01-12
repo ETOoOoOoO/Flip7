@@ -386,6 +386,13 @@ export class GameHost {
         const result = this.round.useSecondChance(peerId);
 
         if (result.success) {
+            // Broadcast l'action pour l'animation
+            this.broadcast(createMessage(MessageType.ACTION_PLAYED, {
+                playerId: peerId,
+                actionType: 'second-chance',
+                effects: [{ type: 'second-chance', targetId: peerId }]
+            }));
+
             this.broadcastGameState();
             this.broadcastTurnChange();
         }
