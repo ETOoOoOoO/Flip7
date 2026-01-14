@@ -263,7 +263,13 @@ export class TableUI {
 
                 // Cartes action ne sont plus cliquables (automatiques)
                 if (cardObj.isAction() && cardObj.subType !== ActionType.SECOND_CHANCE) {
-                    // Pas de listener, usage immédiat à la pioche
+                    // Enable manual play for action cards in hand (e.g. obtained via Flip 3)
+                    if (isMyTurn && (player.status === 'active' || player.status === PlayerStatus.ACTIVE)) {
+                        cardEl.classList.add('clickable');
+                        cardEl.addEventListener('click', () => {
+                            this.showTargetModalForAction(cardObj);
+                        });
+                    }
                 }
 
                 this.localCards.appendChild(cardEl);
@@ -809,7 +815,110 @@ export class TableUI {
      * Joue une animation (placeholder pour compatibilité)
      */
     playAnimation(type, data) {
-        console.log('Playing animation:', type, data);
-        // Animation logic can be extended here
+        console.log(`Playing animation: ${type} `, data);
+
+        // Sound Effects
+        if (type === 'freeze') this.audioManager?.playActionEffect('freeze');
+        if (type === 'stop') this.audioManager?.playActionEffect('stop');
+        if (type === 'flip-three-card' || type === 'flip-three-action') this.audioManager?.playActionEffect('flip-three');
+
+        // Find target element (avatar)
+        const getTargetElement = (playerId) => {
+            if (playerId === this.currentLocalPlayerId) {
+                return document.querySelector('.local-player-info .local-avatar');
+            } else {
+                const seat = document.querySelector(`.player-seat[data-player-id="${playerId}"]`);
+                return seat?.querySelector('.player-seat-avatar');
+            }
+        };
+
+        if (type === 'freeze') {
+            const targetEl = getTargetElement(data.effects[0].targetId);
+            if (targetEl) {
+                const parent = targetEl.closest('.player-seat') || targetEl.closest('.local-player-info');
+                parent?.classList.add('frozen');
+
+                // Add temporary class for effect overlay
+                const effectOverlay = document.createElement('div');
+                effectOverlay.className = 'frozen-effect';
+                targetEl.appendChild(effectOverlay);
+
+                setTimeout(() => {
+                    parent?.classList.remove('frozen');
+                    effectOverlay.remove();
+                }, 3000);
+            }
+        } else if (type === 'flip-three-card' || type === 'flip-three-bust' || type === 'flip-three-action') {
+            // Effect on target
+            const targetId = data.effects[0].targetId;
+            const targetEl = getTargetElement(targetId);
+
+            if (targetEl) {
+                targetEl.classList.add('flip3-target');
+                setTimeout(() => targetEl.classList.remove('flip3-target'), 1000);
+
+                // Flying cards animation
+                const deck = document.getElementById('deck');
+                const rectStart = deck.getBoundingClientRect();
+                const rectEnd = targetEl.getBoundingClientRect();
+
+                for (let i = 0; i < 3; i++) {
+                    const card = document.createElement('div');
+                    card.className = 'flying-card';
+                    card.style.left = `${rectStart.left} px`;
+                    card.style.top = `${rectStart.top} px`;
+                    document.body.appendChild(card);
+
+                    setTimeout(() => {
+                        card.style.transform = `translate(${rectEnd.left - rectStart.left + (Math.random() * 20 - 10)}px, ${rectEnd.top - rectStart.top + (Math.random() * 20 - 10)}px) rotate(${Math.random() * 360}deg)`;
+                        card.style.opacity = '0';
+                    }, 50 + i * 150);
+
+                    setTimeout(() => card.remove(), 1000);
+                }
+            }
+        } else if (type === 'stop') {
+            const targetEl = getTargetElement(data.effects[0].targetId);
+            if (targetEl) {
+                const stopSign = document.createElement('div');
+                stopSign.textContent = '🛑';
+                stopSign.style.position = 'absolute';
+                stopSign.style.inset = '0';
+                stopSign.style.display = 'flex';
+                stopSign.style.alignItems = 'center';
+                stopSign.style.justifyContent = 'center';
+                stopSign.style.fontSize = '3rem';
+                stopSign.style.zIndex = '20';
+                stopSign.style.animation = 'pop-in-out 1.5s ease-in-out forwards';
+                stopSign.style.pointerEvents = 'none';
+
+                targetEl.appendChild(stopSign);
+                setTimeout(() => stopSign.remove(), 1500);
+            }
+        } else if (type === 'action-timer') {
+            const duration = data.duration || 5000;
+            // Banner content
+            const text = 'Joue ta carte !';
+            const icon = '⏳';
+
+            // Show banner with progress bar
+            this.showActionBanner(icon, text, 'timer', duration);
+
+            // Add progress bar to banner if not present
+            if (this.actionBanner) {
+                let progressBar = this.actionBanner.querySelector('.timer-progress');
+                if (!progressBar) {
+                    progressBar = document.createElement('div');
+                    progressBar.className = 'timer-progress';
+                    this.actionBanner.appendChild(progressBar);
+                }
+
+                // Reset animation
+                progressBar.style.animation = 'none';
+                progressBar.offsetHeight; /* trigger reflow */
+                // We need a specific keyframe for width 100% -> 0%
+                progressBar.style.animation = `timer-progress ${duration}ms linear forwards`;
+            }
+        }
     }
 }

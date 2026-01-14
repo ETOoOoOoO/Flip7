@@ -180,6 +180,9 @@ export class GameClient {
                 this.pendingSecondChance = true;
                 this.notifyStateChange();
                 break;
+            case MessageType.ACTION_TIMER:
+                this.onAnimation?.('action-timer', message);
+                break;
         }
 
         this.onMessage?.(message);

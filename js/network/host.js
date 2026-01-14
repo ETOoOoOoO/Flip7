@@ -363,7 +363,39 @@ export class GameHost {
             }
         }
 
-        if (result.roundEnded) {
+        if (result.waitAction) {
+            // Action card drawn, start timer
+            const ACTION_TIMEOUT = 5000;
+            this.broadcast(createMessage(MessageType.ACTION_TIMER, {
+                duration: ACTION_TIMEOUT,
+                playerId: peerId
+            }));
+
+            // Clear any existing timeout
+            if (this.actionTimeout) {
+                clearTimeout(this.actionTimeout);
+                this.actionTimeout = null;
+            }
+
+            // Start new timeout
+            this.actionTimeout = setTimeout(() => {
+                console.log('Action timer expired, advancing turn');
+                if (this.round && this.round.getCurrentPlayer()?.id === peerId) {
+                    this.round.advanceToNextPlayer();
+                    if (Rules.isRoundOver(this.players)) {
+                        this.endRound();
+                    } else {
+                        this.broadcastTurnChange();
+                    }
+                    this.notifyStateChange();
+                }
+                this.actionTimeout = null;
+            }, ACTION_TIMEOUT);
+
+            // Should we notify state change here? Yes, but maybe not vital if client handles timer animation separately.
+            // But we should sync pending state if we had one.
+            // For now, no special state flag needed on host besides simple timeout?
+        } else if (result.roundEnded) {
             this.endRound();
         } else if (!result.canUseSecondChance) {
             this.broadcastTurnChange();
@@ -477,6 +509,12 @@ export class GameHost {
         // Notify host locally so it sees the same messages as clients
         const actionMsg = { type: 'ACTION_PLAYED', ...result };
         this.onMessage?.(actionMsg);
+
+        // Cancel pending action timer if any
+        if (this.actionTimeout) {
+            clearTimeout(this.actionTimeout);
+            this.actionTimeout = null;
+        }
 
         // Trigger animation for the host (local player)
         if (result.effects && result.effects.length > 0) {

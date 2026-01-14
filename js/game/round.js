@@ -133,8 +133,9 @@ export class Round {
         } else if (card.isAction()) {
             player.addCard(card);
             result.actionCard = card.subType;
-            // Les cartes action restent en main, le tour passe
-            this.advanceToNextPlayer();
+            // Ne pas passer le tour tout de suite, on attend que le joueur joue ou que le timer expire
+            result.waitAction = true;
+            // this.advanceToNextPlayer(); // <-- REMOVED
         } else if (card.isModifier()) {
             player.addCard(card);
             this.advanceToNextPlayer();
