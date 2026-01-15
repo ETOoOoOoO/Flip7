@@ -257,7 +257,7 @@
 
 .action-banner {
     position: fixed;
-    top: 35%;
+    top: 15%;
     left: 50%;
     transform: translate(-50%, -100%);
     z-index: 10000;
