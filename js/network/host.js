@@ -537,17 +537,9 @@ export class GameHost {
             return;
         }
 
-        // After action, if target was affected (STAYED/BUSTED/FROZEN), check if they were current
-        // and advance if needed
-        const targetPlayer = this.players.find(p => p.id === message.targetId);
-        const currentPlayer = this.round.getCurrentPlayer();
-
-        if (targetPlayer && targetPlayer.id === currentPlayer?.id) {
-            // Target was current player and may no longer be able to play
-            if (targetPlayer.status !== PlayerStatus.ACTIVE && targetPlayer.status !== 'active') {
-                this.round.advanceToNextPlayer();
-            }
-        }
+        // Après avoir joué une action, le joueur qui a joué a terminé son tour
+        // On avance toujours au joueur suivant
+        this.round.advanceToNextPlayer();
 
         if (result.roundEnded) {
             this.endRound();
